@@ -1,0 +1,5 @@
+*.pyc
+*.odt
+
+.venv
+.env
