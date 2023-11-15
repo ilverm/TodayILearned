@@ -1,28 +1,147 @@
-import re
+import unittest
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
-User = get_user_model()
+from .forms import CustomUserCreationForm
+from .models import CustomUser
 
-class UserTestCase(TestCase):
+class UserFormTest(TestCase):
 
-    def setUp(self):
-        self.first_user = User.objects.create(email='temp1@temp.com')
-        self.second_user = User.objects.create(email='temp.user@temp.com')
-        # this should not work because usernames must be unique
-        self.third_user = User.objects.create(email='temp1@temp1.com')
+    def test_empty_form(self):
+        """
+        Test CustomUser creation form to ensure that
+        the 'email' and 'username' fields are present
+        in the empty form.
+        """
+        form = CustomUserCreationForm()
+        self.assertIn('email', form.fields)
+        self.assertIn('username', form.fields)
 
-    def test_users_created_correctly(self):
-        first_user_pattern = re.match('^([^@]+)', self.first_user.email).group(1)
-        second_user_pattern = re.match('^([^@]+)', self.second_user.email).group(1)
+    def test_form_is_valid(self):
+        """
+        Test CustomUser creation form to ensure that
+        the constraints on username are working correctly.
 
-        self.assertEqual(first_user_pattern, self.first_user.username)
-        self.assertEqual(second_user_pattern, self.second_user.username)
+        The constraints include:
+        - Username is at least 8 characters long.
+        - No spaces are present in the username.
+        
+        The constraints are implemented in the
+        validate_username method in forms.py in the users
+        app.
+        """
+        form_data = {
+            'email': 'temp@temp.com',
+            'username': 'temp-user',
+            'password': 'temp-insecure1'
+        }
+        form = CustomUserCreationForm(data=form_data)
+        self.assertTrue(form.is_valid())
 
-        self.assertEqual(User.objects.count(), 3)
+    def test_form_is_not_valid(self):
+        """
+        Test CustomUser creation form to ensure that
+        the constraints on username are working correctly.
 
-    def test_username_must_be_unique(self):
-        #third_user_pattern = re.match('^([^@]+)', self.third_user.email).group(1)
-        # this should not fail
-        self.assertEqual(User.objects.count(), 2)
+        The constraints include:
+        - Username is at least 8 characters long.
+        - No spaces are present in the username.
+
+        The test case provides a username that is too short,
+        violating the length constraint and checks whether
+        the form correctly reports as invalid.
+        
+        The constraints are implemented in the
+        validate_username method in forms.py in the users
+        app.
+        """
+        form_data = {
+            'email': 'temp@temp.com',
+            'username': 'temp',
+            'password': 'temp-insecure1'
+        }
+        form = CustomUserCreationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+class UserModelTest(TestCase):
+
+    def test_username_length_validation(self):
+        """
+        Test the username validator in the CustomUser model.
+
+        The test case creates a CustomUser instance with a
+        username that is less than 8 characters long, violating
+        the length constraint. It then checks whether the
+        validator correctly raises a ValidationError.
+
+        The username validator is implemented in validators.py
+        in the users app. It enforces the constraint that the
+        username must be at least 8 characters long and must
+        not contain spaces. 
+        """
+        temp_user = CustomUser.objects.create(
+            email='temp@temp.com', 
+            username='temp', 
+            password='temp-insecure1'
+        )
+        self.assertRaises(ValidationError, temp_user.full_clean)
+
+    def test_username_no_spaces_validation(self):
+        """
+        Test the username validator in the CustomUser model.
+
+        The test case creates a CustomUser instance with a
+        username that contains spaces, violating the constraint
+        that the username must not have spaces. It then checks
+        whether the validator correctly raises a ValidationError.
+
+        The username validator is implemented in validators.py
+        in the users app. It enforces the constraint that the
+        username must be at least 8 characters long and must
+        not contain spaces.
+        """
+        temp_user = CustomUser.objects.create(
+            email='temp@temp.com',
+            username=' temptemp',
+            password='temp-insecure1'
+        )
+        self.assertRaises(ValidationError, temp_user.full_clean)
+
+    def test_username_required(self):
+        """
+        Test the username blank validator in the CustomUser
+        model.
+
+        The test case creates a CustomUser instance with a
+        missing username, violating the constraint that the
+        username is required.
+
+        The validator is expected to raise a ValidationError
+        since the username field is set as "blank=False",
+        indicating that it must not be left empty.
+        """
+        temp_user = CustomUser.objects.create(
+            email='temp@temp.com',
+            password='temp-insecure1'
+        )
+        self.assertRaises(ValidationError, temp_user.full_clean)
+
+    def test_model_str_representation(self):
+        """
+        Test the __str__ method of the CustomUser model.
+
+        The test case creates a CustomUser instance with a
+        specified email. It then checks whether the __str__
+        method correctly returns the email field.
+
+        The __str__ method is expected to provide a
+        human_readable representation of the user and, in this
+        case, it should return the value of the 'email' field.
+        """
+        temp_user = CustomUser.objects.create(
+            email='temp@temp.com',
+            username='temptemp',
+            password='temp-insecure1'
+        )
+        self.assertEqual(str(temp_user), 'temp@temp.com')
