@@ -1,7 +1,6 @@
 import unittest
 
 from django.test import TestCase, Client
-from django.http import HttpRequest
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
@@ -10,7 +9,6 @@ from .forms import PostForm
 
 User = get_user_model()
 
-@unittest.skip(reason='Working')
 class PostViewsTest(TestCase):
 
     def setUp(self):
@@ -53,25 +51,37 @@ class PostModelTest(TestCase):
     def test_post_str_method(self):
         self.assertEqual(str(self.post), 'temp')
 
-@unittest.skip(reason='Working')
 class PostFormTest(TestCase):
-
-    def setUp(self):
-        self.test_user = User.objects.create(email='temp@temp.com')
 
     def test_empty_form(self):
         form = PostForm()
         self.assertIn('title', form.fields)
         self.assertIn('source', form.fields)
+        self.assertIn('tag', form.fields)
 
-    def test_form_works_correctly(self):
+    def test_clean_tag_valid(self):
+        # Test the clean tag method with valid data
         form_data = {
             'title': 'temp_title',
-            'source': 'http://www.temp.com',
+            'source': 'http://www.test.com',
+            'tag': 'Test'
         }
         form = PostForm(data=form_data)
-        self.assertTrue(form.is_valid())
-        temp = form.save(commit=False)
-        temp.author = self.test_user
-        temp.save()
-        self.assertEqual(Post.objects.count(), 1)
+        # Run the form validation method
+        form.is_valid()
+        # Check that the clean method does not raise a
+        # ValidationError
+        self.assertIsNone(form.errors.get('tag'))
+
+    def test_clean_tag_invalid(self):
+        # Test the clean tag method with invalid data
+        form_data = {
+            'title': 'temp_title',
+            'source': 'http://www.test.com',
+            'tag': 'Test tag'
+        }
+        form = PostForm(data=form_data)
+        # Run the form validation method
+        form.is_valid()
+        # Check that the clean method raises a ValidationError
+        self.assertIn('tag', form.errors)

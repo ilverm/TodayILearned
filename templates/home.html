@@ -1,3 +1,9 @@
-<p>POST CREATI:</p>
-<br>
-{{ post_qs }}
+<p>CREATED POSTS:</p>
+{% for obj in post_qs %}
+    <p>{{ obj.title }} - 
+    {% for tag in obj.tag.all %}
+        {{ tag.name }}</p>
+    {% endfor %}
+{% endfor %}
+
+<p><a href="{% url 'create' %}">Create</a></p>

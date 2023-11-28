@@ -1,10 +1,13 @@
 from django.db import models
 
+from tags.models import Tag
+
 class Post(models.Model):
     title = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     source = models.URLField()
     author = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
+    tag = models.ManyToManyField(Tag)
     # If the account gets deleted, the "like" value will be changed back to its default value --> False
     # like = models.ForeignKey('likes.Like', on_delete=models.SET_DEFAULT, default=False)
     # If the account gets deleted, the rating given to a post will be set to null --> no rating.
