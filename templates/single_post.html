@@ -1,0 +1,14 @@
+<strong>{{ single_post }}</strong>
+<form action="" method="post">
+    {% csrf_token %}
+    <p>
+        <strong>Likes </strong>{{ single_post.likes }}
+        {% if not liked %}
+            <input type="submit" value="Like" name="like">
+        {% else %}
+        <input type="submit" value="Dislike" name="dislike">
+        {% endif %}
+    </p>
+</form>
+
+<a href="{% url 'home' %}">All posts</a>

@@ -34,7 +34,8 @@ class UserFormTest(TestCase):
         form_data = {
             'email': 'temp@temp.com',
             'username': 'temp-user',
-            'password': 'temp-insecure1'
+            'password1': 'password-insecure1',
+            'password2': 'password-insecure1',
         }
         form = CustomUserCreationForm(data=form_data)
         self.assertTrue(form.is_valid())

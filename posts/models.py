@@ -8,8 +8,7 @@ class Post(models.Model):
     source = models.URLField()
     author = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag)
-    # If the account gets deleted, the "like" value will be changed back to its default value --> False
-    # like = models.ForeignKey('likes.Like', on_delete=models.SET_DEFAULT, default=False)
+    likes = models.PositiveIntegerField(default=0)
     # If the account gets deleted, the rating given to a post will be set to null --> no rating.
     # rate = models.ForeignKey('rates.Rate', on_delete=models.SET_NULL)
     # If the account gets deleted, the comments will also be deleted

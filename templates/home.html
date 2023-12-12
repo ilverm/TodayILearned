@@ -1,6 +1,6 @@
 <p>CREATED POSTS:</p>
 {% for obj in post_qs %}
-    <p>{{ obj.title }} - 
+    <p><a href="{% url 'single_post' obj.pk %}">{{ obj.title }}</a> - 
     {% for tag in obj.tag.all %}
         {{ tag.name }}</p>
     {% endfor %}

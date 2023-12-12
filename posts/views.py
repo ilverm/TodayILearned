@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 
 from tags.models import Tag
 
 from .models import Post
 from .forms import PostForm
+
+from likes.models import Like
 
 User = get_user_model()
 
@@ -31,3 +34,28 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'create.html', {'form': form})
+
+@login_required
+def single_post_view(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    user = request.user
+    like, _ = Like.objects.get_or_create(user=user, post=post)
+    if request.method == 'POST':
+        # Check if the user has already liked or disliked the post
+        if 'like' in request.POST:
+            post.likes = F('likes') + 1
+            like.liked = True
+        if 'dislike' in request.POST:
+            post.likes = F('likes') - 1
+            like.liked = False
+            
+    post.save()
+    post.refresh_from_db()
+    like.save()
+
+    context = {
+        'single_post': post, 
+        'likes': post.likes,
+        'liked': like.liked,
+        }
+    return render(request, 'single_post.html', context=context)
