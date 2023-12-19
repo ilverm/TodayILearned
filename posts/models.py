@@ -7,7 +7,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     source = models.URLField()
     author = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
-    tag = models.ManyToManyField(Tag)
+    private = models.BooleanField(default=False)
+    tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, related_name='posts_tag', null=True)
     likes = models.PositiveIntegerField(default=0)
     # If the account gets deleted, the rating given to a post will be set to null --> no rating.
     # rate = models.ForeignKey('rates.Rate', on_delete=models.SET_NULL)

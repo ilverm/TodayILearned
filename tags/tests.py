@@ -14,14 +14,14 @@ class TagModelTest(TestCase):
 
     def setUp(self):
         self.author = User.objects.create(email='test@test.com', username='test')
-        self.post = Post.objects.create(title='temp post', source='http://www.temp.com', author=self.author)
-        self.tag = Tag.objects.create(name='Test_tag')
-
-    def test_add_tags_to_posts(self):
-        # Add tag to the post
-        self.post.tag.add(self.tag)
-        self.assertEqual(self.post.tag.count(), 1)
+        self.tag = Tag.objects.create(name='Test')
+        self.post = Post.objects.create(
+            title='temp post', 
+            source='http://www.temp.com', 
+            author=self.author,
+            tag=self.tag
+        )
 
     def test_tag_str_method(self):
-        self.assertEqual(str(self.tag), 'Test_tag')
+        self.assertEqual(str(self.tag), 'Test')
 

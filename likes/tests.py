@@ -21,8 +21,9 @@ class LikeModelTest(TestCase):
             title='temp', 
             source='http://www.temp.com', 
             author=self.user,
+            tag=self.tag,
+            likes=2
         )
-        self.post.tag.add(self.tag)
 
     def test_create_like(self):
         """
@@ -73,15 +74,16 @@ class LikeModelTest(TestCase):
         post1 = Post.objects.create(
             title='temp1',
             source='http://www.temp.com',
-            author=self.user
+            author=self.user,
+            tag=self.tag
         )
-        post1.tag.add(self.tag)
+
         post2 = Post.objects.create(
             title='temp2',
             source='http://www.temp.com',
-            author=self.user
+            author=self.user,
+            tag=self.tag
         )
-        post2.tag.add(self.tag)
 
         Like.objects.create(user=self.user, post=post1)
         Like.objects.create(user=self.user, post=post2)
@@ -102,9 +104,9 @@ class LikeModelTest(TestCase):
         post = Post.objects.create(
             title='temp',
             source='http://www.temp.com',
-            author=user1
+            author=user1,
+            tag=self.tag
         )
-        post.tag.add(self.tag)
 
         Like.objects.create(user=user1, post=post, liked=True)
         Like.objects.create(user=user2, post=post, liked=True)
@@ -126,3 +128,12 @@ class LikeModelTest(TestCase):
 
         updated_like = Like.objects.get(user=self.user, post=self.post)
         self.assertTrue(updated_like.liked)
+
+    def test_decrease_post_likes(self):
+        like = Like.objects.create(user=self.user, post=self.post, liked=True)
+        initial_likes = self.post.likes
+
+        like.delete()
+
+        updated_post = Post.objects.get(id=self.post.id)
+        self.assertEqual(updated_post.likes, initial_likes - 1)

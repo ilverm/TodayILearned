@@ -15,7 +15,7 @@ from likes.models import Like
 User = get_user_model()
 
 def home_page(request):
-    post_qs = Post.objects.all()
+    post_qs = Post.objects.filter(private=False)
     context = {'post_qs': post_qs}
     return render(request, 'home.html', context=context)
 
@@ -27,9 +27,8 @@ def create_post(request):
             title = form.cleaned_data.get('title')
             source = form.cleaned_data.get('source')
             tag = form.cleaned_data.get('tag')
-            new_post = Post.objects.create(title=title, source=source, author=request.user)
             tag, _ = Tag.objects.get_or_create(name=tag)
-            new_post.tag.add(tag)
+            Post.objects.create(title=title, source=source, author=request.user, tag=tag)
             return HttpResponseRedirect(reverse('home'))
     else:
         form = PostForm()
