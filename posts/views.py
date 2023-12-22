@@ -5,12 +5,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
 
-from tags.models import Tag
-
 from .models import Post
 from .forms import PostForm
 
 from likes.models import Like
+
+from tags.models import Tag
+
+from users.forms import CustomUserCreationForm
 
 User = get_user_model()
 
@@ -21,6 +23,8 @@ def home_page(request):
 
 @login_required
 def create_post(request):
+    if request.method == 'GET':
+        form = PostForm()
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -30,8 +34,6 @@ def create_post(request):
             tag, _ = Tag.objects.get_or_create(name=tag)
             Post.objects.create(title=title, source=source, author=request.user, tag=tag)
             return HttpResponseRedirect(reverse('home'))
-    else:
-        form = PostForm()
     return render(request, 'create.html', {'form': form})
 
 @login_required
@@ -58,3 +60,12 @@ def single_post_view(request, post_pk):
         'liked': like.liked,
         }
     return render(request, 'single_post.html', context=context)
+
+def create_account(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('login'))
+    form = CustomUserCreationForm()
+    return render(request, 'registration/create_account.html', {'form': form})

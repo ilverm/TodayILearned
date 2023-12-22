@@ -1,10 +1,44 @@
 import unittest
 
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 
 from .forms import CustomUserCreationForm
 from .models import CustomUser
+
+class AuthenticationIntegrationTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        # Create a test user for authentication testing
+        self.user = CustomUser.objects.create_user(
+            email='test@test.com',
+            username='Testuser',
+            password='test-insecure1'
+        )
+
+    def test_user_login(self):
+        """
+        Integration test for user login functionality.
+
+        This test verifies that a user can successfully log in,
+        and the session contains the expected information
+        after the login.
+        """
+        login_successful = self.client.login(
+            email='test@test.com',
+            password='test-insecure1'
+        )
+        self.assertTrue(login_successful)
+
+        # Check if user is logged in by checking the session
+        self.assertTrue('_auth_user_id' in self.client.session)
+        user_id_in_session = self.client.session['_auth_user_id']
+
+        # Verify the user ID in the session matches the
+        # expected user ID
+        self.assertEqual(user_id_in_session, str(self.user.id))
 
 class UserFormTest(TestCase):
 

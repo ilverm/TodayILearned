@@ -23,8 +23,9 @@ class PostViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_home_page_displays_non_private_posts(self):
-        # Create some test data
+    def test_home_page_displays_public_posts(self):
+        # Create some test data. If a post's private field
+        # is set to False, then it is considered public.
         Post.objects.create(
             title='Test Post 1', 
             source='http://www.temp.com', 
