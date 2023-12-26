@@ -4,7 +4,7 @@ on:
     push:
         branches:
             - '*'
-    worflow_dispatch:
+    workflow_dispatch:
 
 jobs:
     test:
@@ -17,7 +17,7 @@ jobs:
         - name: Set up Python
           uses: actions/setup-python@v2
           with:
-            python-version: [3.7, 3.8, 3.9, 3.10]
+            python-version: 3.10
 
         - name: Install dependencies
           run: |
