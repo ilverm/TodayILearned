@@ -9,12 +9,10 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
-
-        services:
-            mysql:
-                image: mysql:latest
-                env:
-                    ENGINE: ${{ secrets.DB_ENGINE }}
+        
+        env:
+            SECRET_KEY: ${{ secrets.SECRET_KEY }}
+            DB_ENGINE: ${{ secrets.DB_ENGINE }}
 
         steps:
         - name: Checkout code
