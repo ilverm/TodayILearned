@@ -13,6 +13,8 @@ jobs:
         services:
             mysql:
                 image: mysql:latest
+                env:
+                    DB_ENGINE: ${{ secrets.DB_ENGINE }}
 
         steps:
         - name: Checkout code
