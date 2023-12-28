@@ -1,22 +1,42 @@
 name: CI
 
 on:
-    push:
-        branches:
-            - '*'
-    workflow_dispatch:
+  push:
+  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-        
-        env:
-            SECRET_KEY: ${{ secrets.SECRET_KEY }}
-            DB_ENGINE: ${{ secrets.DB_ENGINE }}
-            DB_PORT: ${{ secrets.DB_PORT }}
-            DB_HOST: ${{ secrets.DB_HOST }}
-
-        steps:
-        - name: Checkout code
-        - uses: actions/checkout@v4
-        - run: mysql -h ${{ secrets.DB_HOST }} --port ${{ secrets.DB_PORT }} -p${{ secrets.DB_PASSWORD }};
+  test:
+    runs-on: ubuntu-latest
+    env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        PYTHON_VERSION: 3.9
+    services:
+        mysql:
+            image: mysql:latest
+            env:
+                DB_USER: ${{ secrets.DB_USER }}
+                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                DB_NAME: ${{ secrets.DB_NAME }}
+            ports:
+                - 8000:8000
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run tests
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_PORT: 8000:8000
+      run: python manage.py test
