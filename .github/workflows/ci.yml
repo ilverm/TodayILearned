@@ -18,7 +18,8 @@ jobs:
 
         steps:
         - name: Checkout code
-          uses: actions/checkout@v4
+        - uses: actions/checkout@v4
+        - run: mysql -h ${{ secrets.DB_HOST }} --port ${{ secrets.DB_PORT }} -p${{ secrets.DB_PASSWORD }};
 
         - name: Set up Python
           uses: actions/setup-python@v4
