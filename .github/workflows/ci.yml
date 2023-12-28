@@ -10,15 +10,11 @@ jobs:
     test:
         runs-on: ubuntu-latest
         
-        services:
-            mysql:
-                image: mysql:latest
-                ports: ${{ secrets.DB_PORT }}
-                env:
-                    DB_ENGINE: ${{ secrets.DB_ENGINE }}
-                    DB_PORT: ${{ secrets.DB_PORT }}
-                    DB_HOST: ${{ secrets.DB_HOST }}
-                    SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        env:
+            SECRET_KEY: ${{ secrets.SECRET_KEY }}
+            DB_ENGINE: ${{ secrets.DB_ENGINE }}
+            DB_PORT: ${{ secrets.DB_PORT }}
+            DB_HOST: ${{ secrets.DB_HOST }}
 
         steps:
         - name: Checkout code
