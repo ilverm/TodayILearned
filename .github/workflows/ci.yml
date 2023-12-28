@@ -44,5 +44,5 @@ jobs:
 
       run: |
         sudo /etc/init.d/mysql start
-        mysql -h ${{ secrets.DB_HOST }} --port 8000 -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
-        python manage.py runserver
+        mysql -h -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        python manage.py test
