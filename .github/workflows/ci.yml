@@ -37,5 +37,5 @@ jobs:
     - name: Run tests
       run: |
         sudo /etc/init.d/mysql start
-        mysql -h localhost -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
+        mysql -h localhost -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
         python manage.py test
