@@ -38,5 +38,5 @@ jobs:
       run: |
         sudo /etc/init.d/mysql start
         echo 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
-        mysql -h localhost -e 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        mysql -h localhost -e 'CREATE DATABASE TempDB;' -uroot -proot
         python manage.py test
