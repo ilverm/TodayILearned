@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -37,6 +37,6 @@ jobs:
     - name: Run tests
       run: |
         sudo /etc/init.d/mysql start
-        echo 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
-        mysql -h localhost -e 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        echo 'CREATE DATABASE TempDB;' -uroot -ppassword
+        mysql -h localhost -e 'CREATE DATABASE TempDB;' -uroot -ppassword
         python manage.py test
