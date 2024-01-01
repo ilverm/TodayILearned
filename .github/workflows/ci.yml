@@ -15,13 +15,6 @@ jobs:
     services:
         mysql:
             image: mysql:latest
-            env:
-                SECRET_KEY: ${{ secrets.SECRET_KEY }}
-                DB_ENGINE: ${{ secrets.DB_ENGINE }}
-                DB_USER: ${{ secrets.DB_USER }}
-                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-                DB_NAME: ${{ secrets.DB_NAME }}
-                DB_HOST: ${{ secrets.DB_HOST }}
             ports:
                 - 3306:3306
     steps:
@@ -35,8 +28,15 @@ jobs:
       run: |
         pip install -r requirements.txt
     - name: Run tests
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DB_ENGINE: ${{ secrets.DB_ENGINE }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_HOST: ${{ secrets.DB_HOST }}
       run: |
         sudo /etc/init.d/mysql start
-        echo 'CREATE DATABASE TempDB;' -uroot -ppassword
-        mysql -h localhost -e 'CREATE DATABASE TempDB;' -uroot -proot
+        echo 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        mysql -h localhost -e 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
         python manage.py test
