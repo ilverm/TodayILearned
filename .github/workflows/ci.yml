@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         PYTHON_VERSION: "3.10"
@@ -37,5 +37,5 @@ jobs:
     - name: Run tests
       run: |
         sudo /etc/init.d/mysql start
-        mysql -h localhost -e "CREATE DATABASE ${{ secrets.DB_NAME }};" -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        mysql -h localhost -e 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
         python manage.py test
