@@ -35,6 +35,7 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: 3306
       run: |
         sudo /etc/init.d/mysql start
         echo 'CREATE DATABASE ${{ secrets.DB_NAME }};' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
