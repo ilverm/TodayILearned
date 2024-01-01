@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-  workflow_dispatch:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         PYTHON_VERSION: "3.10"
