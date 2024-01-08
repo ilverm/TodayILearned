@@ -8,6 +8,7 @@ from users.models import CustomUser
 from tags.models import Tag
 
 from .models import Like
+from .signals import get_or_none
 
 class LikeModelTest(TestCase):
     """
@@ -137,3 +138,33 @@ class LikeModelTest(TestCase):
 
         updated_post = Post.objects.get(id=self.post.id)
         self.assertEqual(updated_post.likes, initial_likes - 1)
+
+class LikeSignalTest(TestCase):
+
+    def setUp(self):
+        self.user = CustomUser.objects.create(username='temp-user', email='temp@temp.com')
+        self.tag = Tag.objects.create(name='Temp')
+        self.post = Post.objects.create(
+            title='temp', 
+            source='http://www.temp.com', 
+            author=self.user,
+            tag=self.tag,
+            likes=2
+        )
+
+    def test_get_existing_obj(self):
+        """
+        Test if the get_or_none function correctly returns
+        an existing obj when provided with a valid id.
+        """
+        obj = get_or_none(Post, id=self.post.id)
+        self.assertIsNotNone(obj)
+        self.assertEqual(obj.id, self.post.id)
+
+    def test_get_nonexistent_obj(self):
+        """
+        Test if the get_or_none function correctly returns
+        None when provided with an id that doesn't exist.
+        """
+        obj = get_or_none(Post, id=999)
+        self.assertIsNone(obj)

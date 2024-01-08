@@ -21,5 +21,6 @@ urlpatterns = [
         success_url='/'),
         name='password_change'
     ),
-    path('accounts/create/', views.create_account, name='create_account')
+    path('accounts/create/', views.create_account, name='create_account'),
+    path('tinymce/', include('tinymce.urls')),
 ]
