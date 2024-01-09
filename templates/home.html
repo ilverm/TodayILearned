@@ -16,7 +16,7 @@
     <a href="{% url 'login' %}">Login</a>
 {% endif %}
 {% for obj in post_qs %}
-    <p><a href="{% url 'single_post' obj.pk %}">{{ obj.title }}</a> - 
+    <p><a href="{% url 'single_post' obj.pk %}">{{ obj.title|safe }}</a> - 
     {{ obj.tag }}
 {% endfor %}
 

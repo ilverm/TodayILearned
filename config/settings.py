@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'posts',
     'tags',
     'likes',
+    'tinymce',
 ]
 
 MIDDLEWARE = [

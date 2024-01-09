@@ -1,8 +1,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from tinymce.widgets import TinyMCE
+
+from .models import Post
+
 class PostForm(forms.Form):
-    title = forms.CharField(label='Title', required=True)
+    title = forms.CharField(label='Title', required=True, widget=TinyMCE)
     source = forms.URLField(label='Source', required=True)
     tag = forms.CharField(label='Tag', required=True, max_length=25)
 
