@@ -19,7 +19,8 @@ class LikeModelTest(TestCase):
         self.user = CustomUser.objects.create(username='temp-user', email='temp@temp.com')
         self.tag = Tag.objects.create(name='Temp')
         self.post = Post.objects.create(
-            title='temp', 
+            title='temp',
+            content='content',
             source='http://www.temp.com', 
             author=self.user,
             tag=self.tag,
@@ -74,6 +75,7 @@ class LikeModelTest(TestCase):
         """
         post1 = Post.objects.create(
             title='temp1',
+            content='content',
             source='http://www.temp.com',
             author=self.user,
             tag=self.tag
@@ -81,6 +83,7 @@ class LikeModelTest(TestCase):
 
         post2 = Post.objects.create(
             title='temp2',
+            content='content',
             source='http://www.temp.com',
             author=self.user,
             tag=self.tag
@@ -104,6 +107,7 @@ class LikeModelTest(TestCase):
         user2 = CustomUser.objects.create(username='test2', email='test2@test.com')
         post = Post.objects.create(
             title='temp',
+            content='content',
             source='http://www.temp.com',
             author=user1,
             tag=self.tag
@@ -145,7 +149,8 @@ class LikeSignalTest(TestCase):
         self.user = CustomUser.objects.create(username='temp-user', email='temp@temp.com')
         self.tag = Tag.objects.create(name='Temp')
         self.post = Post.objects.create(
-            title='temp', 
+            title='temp',
+            content='content',
             source='http://www.temp.com', 
             author=self.user,
             tag=self.tag,

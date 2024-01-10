@@ -1,3 +1,5 @@
+<!DOCTYPE HTML>
+
 <div id="flex-container" style="display: flex; justify-content: space-between !important;">
     <div>CREATED POSTS:</div>
     {% if user.is_authenticated %}
@@ -16,8 +18,9 @@
     <a href="{% url 'login' %}">Login</a>
 {% endif %}
 {% for obj in post_qs %}
-    <p><a href="{% url 'single_post' obj.pk %}">{{ obj.title|safe }}</a> - 
-    {{ obj.tag }}
+    <p>
+        <strong><a href="{% url 'single_post' obj.pk %}">{{ obj.title }}</a></strong> - {{ obj.tag }}
+    </p>
 {% endfor %}
 
 <p><a href="{% url 'create' %}">Create</a></p>

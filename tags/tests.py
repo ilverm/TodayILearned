@@ -16,7 +16,8 @@ class TagModelTest(TestCase):
         self.author = User.objects.create(email='test@test.com', username='test')
         self.tag = Tag.objects.create(name='Test')
         self.post = Post.objects.create(
-            title='temp post', 
+            title='temp post',
+            content='content',
             source='http://www.temp.com', 
             author=self.author,
             tag=self.tag

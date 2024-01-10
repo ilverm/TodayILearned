@@ -29,10 +29,17 @@ def create_post(request):
         form = PostForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')
+            content = form.cleaned_data.get('content')
             source = form.cleaned_data.get('source')
             tag = form.cleaned_data.get('tag')
             tag, _ = Tag.objects.get_or_create(name=tag)
-            Post.objects.create(title=title, source=source, author=request.user, tag=tag)
+            Post.objects.create(
+                title=title, 
+                content=content, 
+                source=source, 
+                author=request.user, 
+                tag=tag
+            )
             return HttpResponseRedirect(reverse('home'))
     return render(request, 'create.html', {'form': form})
 

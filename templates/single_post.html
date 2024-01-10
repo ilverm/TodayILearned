@@ -1,4 +1,7 @@
+<!DOCTYPE html>
+
 <strong>{{ single_post }}</strong>
+<p>{{ single_post.content|safe }}</p>
 <form action="" method="post">
     {% csrf_token %}
     <p>

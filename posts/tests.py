@@ -27,13 +27,15 @@ class PostViewsTest(TestCase):
         # Create some test data. If a post's private field
         # is set to False, then it is considered public.
         Post.objects.create(
-            title='Test Post 1', 
+            title='Test Post 1',
+            content='content', 
             source='http://www.temp.com', 
             author=self.test_user,
             private=False
         )
         Post.objects.create(
-            title='Test Post 2', 
+            title='Test Post 2',
+            content='content',
             source='http://www.temp.com', 
             author=self.test_user,
             private=False
@@ -49,12 +51,14 @@ class PostViewsTest(TestCase):
         # Create some test data
         Post.objects.create(
             title='Test Post 1',
+            content='content',
             source='http://www.temp.com',
             author=self.test_user,
             private=True
         )
         Post.objects.create(
             title='Test Post 2',
+            content='content',
             source='http://www.temp.com',
             author=self.test_user,
             private=True
@@ -67,13 +71,20 @@ class PostViewsTest(TestCase):
         self.assertQuerysetEqual(response.context['post_qs'], Post.objects.filter(private=False), ordered=False)
 
     def test_create_post_view(self):
-        response = self.client.post(reverse('create'), {'title': 'temp', 'source': 'http://www.temp.com', 'tag': 'Temp'})
+        response = self.client.post(reverse('create'), {
+            'title': 'temp',
+            'content': 'content', 
+            'source': 'http://www.temp.com', 
+            'tag': 'Temp'
+            }
+        )
         self.assertEqual(response.status_code, 302)
         # add more tests when login functionality is created
 
     def test_single_post_view(self):
         post = Post.objects.create(
             title='Test Post',
+            content='Content',
             source='http://www.temp.com',
             author=self.test_user
         )
@@ -86,7 +97,8 @@ class PostModelTest(TestCase):
         self.test_user = User.objects.create(email='temp@temp.com', password='temp')
         self.tag = Tag.objects.create(name='Temp')
         self.post = Post.objects.create(
-            title='temp', 
+            title='temp',
+            content='content',
             source='http://www.temp.com', 
             author=self.test_user,
             tag=self.tag
@@ -95,6 +107,7 @@ class PostModelTest(TestCase):
     def test_post_creation(self):
         # Check if the post was created successfully
         self.assertEqual(self.post.title, 'temp')
+        self.assertEqual(self.post.content, 'content')
         self.assertEqual(self.post.source, 'http://www.temp.com')
         self.assertEqual(self.post.author, self.test_user)
         self.assertEqual(self.post.tag.name, 'Temp')
@@ -112,6 +125,7 @@ class PostFormTest(TestCase):
     def test_empty_form(self):
         form = PostForm()
         self.assertIn('title', form.fields)
+        self.assertIn('content', form.fields)
         self.assertIn('source', form.fields)
         self.assertIn('tag', form.fields)
 
@@ -119,6 +133,7 @@ class PostFormTest(TestCase):
         # Test the clean tag method with valid data
         form_data = {
             'title': 'temp_title',
+            'content': 'content',
             'source': 'http://www.test.com',
             'tag': 'Test'
         }
@@ -133,6 +148,7 @@ class PostFormTest(TestCase):
         # Test the clean tag method with invalid data
         form_data = {
             'title': 'temp_title',
+            'content': 'content',
             'source': 'http://www.test.com',
             'tag': 'Test tag'
         }
