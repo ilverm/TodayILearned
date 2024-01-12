@@ -5,7 +5,7 @@ from tinymce.widgets import TinyMCE
 
 class PostForm(forms.Form):
     title = forms.CharField(label='Title', required=True)
-    content = forms.CharField(label='Content', required=True, widget=TinyMCE)
+    content = forms.CharField(label='Content', required=True, widget=TinyMCE(attrs={'rows': 20}))
     source = forms.URLField(label='Source', required=True)
     tag = forms.CharField(label='Tag', required=True, max_length=25)
 

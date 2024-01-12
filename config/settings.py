@@ -140,3 +140,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'home'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'silver',
+}
