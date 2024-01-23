@@ -2,7 +2,14 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordChangeForm
 
+from api.views import PostViewSet
+
+from rest_framework import routers
+
 from posts import views
+
+router = routers.DefaultRouter()
+router.register(r'posts', PostViewSet)
 
 urlpatterns = [
     path('', views.home_page, name='home'),
@@ -22,5 +29,9 @@ urlpatterns = [
         name='password_change'
     ),
     path('accounts/create/', views.create_account, name='create_account'),
+
+    path('api/', include(router.urls)),
     
 ]
+
+urlpatterns += router.urls

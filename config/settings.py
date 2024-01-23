@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'posts',
     'tags',
     'likes',
+    'api',
     'tinymce',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
