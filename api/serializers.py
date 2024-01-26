@@ -12,3 +12,6 @@ class PostSerializer(serializers.Serializer):
         data['content'] = strip_tags(instance.content)
         data['content'] = data['content'].replace('&nbsp;', ' ')
         return data
+    
+class TagSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=80, allow_blank=False)

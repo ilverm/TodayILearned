@@ -3,7 +3,10 @@
 <div id="flex-container" style="display: flex; justify-content: space-between !important;">
     <div>CREATED POSTS:</div>
     {% if user.is_authenticated %}
-        <div>{{ user }}</div>
+        <div>
+            {{ user }}
+            <a href="{% url 'api_home' %}">API</a>
+        </div>
         <a href="{% url 'password_change' %}">Change Password</a>
     {% else %}
         <div>User</div>
