@@ -1,5 +1,7 @@
 from django.db import models
 
+from rest_framework import reverse as rest_reverse
+
 from tags.models import Tag
 
 class Post(models.Model):
