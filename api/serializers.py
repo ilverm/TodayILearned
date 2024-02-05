@@ -16,13 +16,13 @@ class PostSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=100)
     content = serializers.CharField()
     source = serializers.URLField()
-    author = serializers.CharField()
+    author = serializers.CharField(read_only=True)
     private = serializers.BooleanField()
     tag = serializers.CharField()
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'source', 'author', 'private', 'tag']
+        fields = '__all__'
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

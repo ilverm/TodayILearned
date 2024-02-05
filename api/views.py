@@ -6,17 +6,23 @@ from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
 from rest_framework import permissions
 from rest_framework import status
-from rest_framework.renderers import TemplateHTMLRenderer
-
 from rest_framework import generics
 
 from .serializers import SinglePostSerializer, TagSerializer, PostSerializer
+from .permissions import AllowPostOnlyForAuthenticated
 
-temp = generics.ListCreateAPIView()
+class ListPosts(generics.ListCreateAPIView):
+    permission_classes = [AllowPostOnlyForAuthenticated]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
-# class ListPosts(generics.ListCreateAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
+    def create(self, request, *args, **kwargs):
+        tag, _ = Tag.objects.get_or_create(name=request.data['tag'])
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(tag=tag, author=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class ApiHome(APIView):
     """
@@ -36,29 +42,6 @@ class ApiHome(APIView):
         """
         name = 'Home'
         return name
-
-class ListPosts(APIView):
-    """
-    API endpoint that allows posts to be viewed or created.
-    """
-
-    def get(self, request, format=None):
-        """
-        Return a list of all posts
-        """
-        qs = Post.objects.all()
-        serialized_data = PostSerializer(qs, many=True, context={'request': request})
-        return Response(serialized_data.data)
-    
-    def post(self, request, format=None):
-        """
-        Create a post
-        """
-        serializer = PostSerializer(data=request.data, context={'request': request})
-        tag, _ = Tag.objects.get_or_create(name=request.data['tag'])
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=request.user, tag=tag)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class ListTags(APIView):
     """
