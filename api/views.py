@@ -4,25 +4,11 @@ from tags.models import Tag
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
-from rest_framework import permissions
 from rest_framework import status
 from rest_framework import generics
 
 from .serializers import SinglePostSerializer, TagSerializer, PostSerializer
 from .permissions import AllowPostOnlyForAuthenticated
-
-class ListPosts(generics.ListCreateAPIView):
-    permission_classes = [AllowPostOnlyForAuthenticated]
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-    def create(self, request, *args, **kwargs):
-        tag, _ = Tag.objects.get_or_create(name=request.data['tag'])
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(tag=tag, author=request.user)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class ApiHome(APIView):
     """
@@ -42,21 +28,54 @@ class ApiHome(APIView):
         """
         name = 'Home'
         return name
-    
-class ListTags(APIView):
-    """
-    API endpoint that allows tags to be viewed
-    """
-    permission_classes = [permissions.IsAuthenticated]
 
-    def  get(self, request, format=None):
-        """
-        Return a list of all tags
-        """
-        qs = Tag.objects.all()
-        serialized_data = TagSerializer(qs, many=True)
-        return Response(serialized_data.data)
+class ListCreatePosts(generics.ListCreateAPIView):
+    """
+    API endpoint that allows posts to be viewed and
+    created
+    """
+    permission_classes = [AllowPostOnlyForAuthenticated]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def create(self, request, *args, **kwargs):
+        tag, _ = Tag.objects.get_or_create(name=request.data['tag'])
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(tag=tag, author=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
+    def get_view_name(self):
+        """
+        Change default name
+        """
+        name = 'Posts'
+        return name
+    
+class ListCreateTags(generics.ListCreateAPIView):
+    """
+    API endpoint that allows tags to be viewed and
+    created
+    """
+    permission_classes = [AllowPostOnlyForAuthenticated]
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def get_view_name(self):
+        """
+        Change default name
+        """
+        name = 'Tags'
+        return name
+
 class SinglePost(APIView):
     """
     API endpoint that allows a single post to be viewed
