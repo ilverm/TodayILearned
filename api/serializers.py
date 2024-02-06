@@ -10,6 +10,7 @@ class UserSerializer(serializers.Serializer):
 
 class TagSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=80, allow_blank=False)
+    created_at = serializers.DateField()
 
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.HyperlinkedIdentityField(view_name='api_singlepost')
@@ -22,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['id', 'title', 'content', 'source', 'author', 'private', 'tag']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
