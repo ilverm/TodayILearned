@@ -6,3 +6,4 @@
 .~lock.Structure.odt#
 .~lock.Timestamps.odt#
 .~lock.Rest api.odt#
+*.code-workspace
