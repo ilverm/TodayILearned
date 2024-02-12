@@ -3,8 +3,10 @@ from tags.models import Tag
 from posts.models import Post
 from api.serializers import PostSerializer, TagSerializer
 
+from unittest.mock import patch
+
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase, APIRequestFactory
+from rest_framework.test import APIClient, APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.reverse import reverse as rest_reverse
 
 import unittest
@@ -38,6 +40,33 @@ class ListCreatePosts(APITestCase):
         url = rest_reverse('api_posts')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch('rest_framework.throttling.AnonRateThrottle.get_rate')
+    def test_get_anon_throttle_endpoint(self, mock):
+        mock.return_value = '1/sec'
+        response = self.client.get(rest_reverse('api_posts'))
+        # Request should pass
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get(rest_reverse('api_posts'))
+        # Request should fail
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    @patch('rest_framework.throttling.UserRateThrottle.get_rate')
+    def test_get_logged_in_user_throttle_endpoint(self, mock):
+        mock.return_value = '2/sec'
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(rest_reverse('api_posts'))
+        # Requet should pass
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get(rest_reverse('api_posts'))
+        # Requet should pass
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get(rest_reverse('api_posts'))
+        # Request should fail
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 
     def test_serializer_post_endpoint(self):
         """

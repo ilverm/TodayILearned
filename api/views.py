@@ -4,6 +4,7 @@ from tags.models import Tag
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework import status
 from rest_framework import generics
 
@@ -35,6 +36,7 @@ class ListCreatePosts(generics.ListCreateAPIView):
     created
     """
     permission_classes = [AllowPostOnlyForAuthenticated]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -59,6 +61,7 @@ class ListCreateTags(generics.ListCreateAPIView):
     created
     """
     permission_classes = [AllowPostOnlyForAuthenticated]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     
@@ -69,15 +72,11 @@ class ListCreateTags(generics.ListCreateAPIView):
         name = 'Tags'
         return name
 
-class SinglePost(APIView):
+class SinglePost(generics.RetrieveAPIView):
     """
     API endpoint that allows a single post to be viewed
     """
-    def get(self, request, pk, format=None):
-        """
-        Return the post that corresponds to the provided
-        pk
-        """
-        post = Post.objects.get(pk=pk)
-        serialized_data = SinglePostSerializer(post, context={'request': request})
-        return Response(serialized_data.data)
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'pk'
