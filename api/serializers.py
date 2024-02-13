@@ -11,7 +11,7 @@ class UserSerializer(serializers.Serializer):
 
 class TagSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=80, allow_blank=False)
-    created_at = serializers.DateField(read_only=True)
+    created_at = serializers.DateField(read_only=True, format='%d %B %Y')
 
     class Meta:
         model = Tag
@@ -23,12 +23,11 @@ class PostSerializer(serializers.ModelSerializer):
     content = serializers.CharField()
     source = serializers.URLField()
     author = serializers.CharField(read_only=True)
-    private = serializers.BooleanField()
     tag = serializers.CharField()
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'source', 'author', 'private', 'tag']
+        fields = ['id', 'title', 'content', 'source', 'author', 'tag']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -43,7 +42,6 @@ class SinglePostSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField(format='%d %B %Y - %H:%M:%S')
     source = serializers.URLField()
     author = UserSerializer()
-    private = serializers.BooleanField()
     tag = TagSerializer()
     likes = serializers.IntegerField()
 

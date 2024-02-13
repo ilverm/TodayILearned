@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+
 from rest_framework import status
 from rest_framework import generics
 
@@ -78,5 +79,5 @@ class SinglePost(generics.RetrieveAPIView):
     """
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = SinglePostSerializer
     lookup_field = 'pk'
