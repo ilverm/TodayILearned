@@ -34,16 +34,16 @@ class PostSerializer(serializers.ModelSerializer):
         data['content'] = strip_tags(instance.content)
         data['content'] = data['content'].replace('&nbsp;', ' ')
         return data
-    
+
 class SinglePostSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=100)
     content = serializers.CharField()
-    created_at = serializers.DateTimeField(format='%d %B %Y - %H:%M:%S')
+    created_at = serializers.DateTimeField(format='%d %B %Y - %H:%M:%S', read_only=True)
     source = serializers.URLField()
-    author = UserSerializer()
+    author = UserSerializer(read_only=True)
     tag = TagSerializer()
-    likes = serializers.IntegerField()
+    likes = serializers.IntegerField(read_only=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

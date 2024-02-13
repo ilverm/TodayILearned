@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class AllowPostOnlyForAuthenticated(permissions.BasePermission):
+class AllowIfAuthenticated(permissions.BasePermission):
     """
     Custom permission class to allow only authenticated users
     to make POST requests
@@ -9,5 +9,5 @@ class AllowPostOnlyForAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method == 'GET':
             return True
-        if request.method == 'POST':
+        if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
             return request.user.is_authenticated

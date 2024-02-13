@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from rest_framework import status
 from rest_framework import generics
 
 from .serializers import SinglePostSerializer, TagSerializer, PostSerializer
-from .permissions import AllowPostOnlyForAuthenticated
 
 class ApiHome(APIView):
     """
@@ -36,7 +36,7 @@ class ListCreatePosts(generics.ListCreateAPIView):
     API endpoint that allows posts to be viewed and
     created
     """
-    permission_classes = [AllowPostOnlyForAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -61,7 +61,7 @@ class ListCreateTags(generics.ListCreateAPIView):
     API endpoint that allows tags to be viewed and
     created
     """
-    permission_classes = [AllowPostOnlyForAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -73,10 +73,11 @@ class ListCreateTags(generics.ListCreateAPIView):
         name = 'Tags'
         return name
 
-class SinglePost(generics.RetrieveAPIView):
+class SinglePost(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint that allows a single post to be viewed
     """
+    permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Post.objects.all()
     serializer_class = SinglePostSerializer

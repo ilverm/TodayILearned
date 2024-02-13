@@ -27,7 +27,6 @@ class ListCreatePosts(APITestCase):
             'content': 'test content',
             'source': 'http://www.test.com',
             'author': self.user.email,
-            'private': False,
             'tag': self.tag.name
         }
 
@@ -94,7 +93,6 @@ class ListCreatePosts(APITestCase):
             'content': 'test content',
             'source': 'http://www.test.com',
             'author': self.user,
-            'private': False,
             'tag': self.tag.name,
         }
         serializer = PostSerializer(data=post_data)
@@ -106,15 +104,7 @@ class ListCreatePosts(APITestCase):
         a post.
         """
         self.client.force_authenticate(user=self.user)
-        post_data = {
-            'title': 'test title',
-            'content': 'test content',
-            'source': 'http://www.test.com',
-            'author': self.user,
-            'private': False,
-            'tag': self.tag.name,
-        }
-        response = self.client.post('/api/posts/', post_data)
+        response = self.client.post(rest_reverse('api_posts'), self.post_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post_endpoint_with_logged_out_user(self): 
@@ -122,16 +112,25 @@ class ListCreatePosts(APITestCase):
         The test ensures logged out users can not create
         a post.
         """
-        post_data = {
-            'title': 'test title',
-            'content': 'test content',
-            'source': 'http://www.test.com',
-            'author': self.user,
-            'private': False,
-            'tag': self.tag.name,
-        }
-        response = self.client.post('/api/posts/', post_data)
+        response = self.client.post(rest_reverse('api_posts'), self.post_data)
         self.assertNotEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_delete_endpoint(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(rest_reverse('api_posts'), self.post_data)
+        response = self.client.delete(path=self.post_data['id'])
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_serializer_update_endpoint(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(rest_reverse('api_posts'), self.post_data)
+
+        new_data = self.post_data
+        new_data['title'] = 'new title'
+        new_data_id = new_data['id'][-2]
+
+        response = self.client.put(rest_reverse('api_singlepost', new_data_id), new_data)
+        self.assertTrue(response.status_code, status.HTTP_200_OK)
 
 class ListCreateTags(APITestCase):
 
