@@ -56,6 +56,17 @@ class ListCreatePosts(generics.ListCreateAPIView):
         name = 'Posts'
         return name
     
+class SinglePost(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint that allows a single post to be viewed,
+    updated or deleted.
+    """
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+    queryset = Post.objects.all()
+    serializer_class = SinglePostSerializer
+    lookup_field = 'pk'
+    
 class ListCreateTags(generics.ListCreateAPIView):
     """
     API endpoint that allows tags to be viewed and
@@ -72,13 +83,15 @@ class ListCreateTags(generics.ListCreateAPIView):
         """
         name = 'Tags'
         return name
-
-class SinglePost(generics.RetrieveUpdateDestroyAPIView):
+    
+class SingleTag(generics.RetrieveUpdateDestroyAPIView):
     """
-    API endpoint that allows a single post to be viewed
+    API endpoint that allows a single tag to be viewed,
+    updated or deleted.
     """
     permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
-    queryset = Post.objects.all()
-    serializer_class = SinglePostSerializer
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
     lookup_field = 'pk'
+    

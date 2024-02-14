@@ -10,6 +10,7 @@ class UserSerializer(serializers.Serializer):
     email = serializers.EmailField(allow_blank=False)
 
 class TagSerializer(serializers.ModelSerializer):
+    id = serializers.HyperlinkedIdentityField(view_name='api_singletag')
     name = serializers.CharField(max_length=80, allow_blank=False)
     created_at = serializers.DateField(read_only=True, format='%d %B %Y')
 

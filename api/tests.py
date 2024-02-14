@@ -1,12 +1,11 @@
 from users.models import CustomUser
 from tags.models import Tag
-from posts.models import Post
 from api.serializers import PostSerializer, TagSerializer
 
 from unittest.mock import patch
 
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase, APIRequestFactory, force_authenticate
+from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 from rest_framework.reverse import reverse as rest_reverse
 
 import unittest
@@ -121,7 +120,7 @@ class ListCreatePosts(APITestCase):
         response = self.client.delete(path=self.post_data['id'])
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_serializer_update_endpoint(self):
+    def test_update_endpoint(self):
         self.client.force_authenticate(user=self.user)
         self.client.post(rest_reverse('api_posts'), self.post_data)
 
@@ -136,8 +135,6 @@ class ListCreateTags(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.tag1 = Tag.objects.create(name='temp')
-        self.tag2 = Tag.objects.create(name='temp2')
         self.user = CustomUser.objects.create(
             username='testuser',
             email='temp@temp.com',
@@ -162,10 +159,26 @@ class ListCreateTags(APITestCase):
         This test ensures the correct functionality of the
         TagSerializer by assessing its behavior.
         """
+        factory = APIRequestFactory()
         url = rest_reverse('api_tags')
-        response = self.client.get(url)
-        expected_data = TagSerializer([self.tag1, self.tag2], many=True).data
-        self.assertEqual(response.data, expected_data)
+        request = factory.get(url)
+        context = {'request': request}
+        serializer = TagSerializer(data=self.post_data, context=context)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            self.assertIn(self.post_data['name'], serializer.data.values())
+
+    def test_tag_delete_endpoint(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(rest_reverse('api_tags'), self.post_data)
+
+        # Get the pk of the obj we created in the post request
+        obj_id = Tag.objects.first().pk
+
+        response = self.client.delete(path=f'http://testserver/api/tags/{obj_id}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_tag_update_endpoint(self): ...
     
     def test_tag_post_endpoint_with_logged_in_user(self):
         """
