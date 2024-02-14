@@ -150,7 +150,7 @@ class ListCreateTags(APITestCase):
         200 OK status code, indicating successful retrieval
         of data
         """
-        url = rest_reverse('api_tags')
+        url = 'http://testserver/api/posts/?page=1'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -178,7 +178,18 @@ class ListCreateTags(APITestCase):
         response = self.client.delete(path=f'http://testserver/api/tags/{obj_id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_tag_update_endpoint(self): ...
+    def test_tag_update_endpoint(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(rest_reverse('api_tags'), self.post_data)
+
+        # Get the pk of the obj we created in the post request
+        obj_id = Tag.objects.first().pk
+        self.post_data['name'] = 'new'
+
+        url = f'http://testserver/api/tags/{obj_id}/'
+
+        response = self.client.put(path=url, data=self.post_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
     
     def test_tag_post_endpoint_with_logged_in_user(self):
         """

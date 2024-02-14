@@ -41,7 +41,7 @@ class ListCreatePosts(generics.ListCreateAPIView):
     """
     permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
 
     @method_decorator(cache_page(60 * 60 * 2))
@@ -81,12 +81,12 @@ class ListCreateTags(generics.ListCreateAPIView):
     """
     permission_classes = [IsAuthenticatedOrReadOnly]
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.all().order_by('-created_at')
     serializer_class = TagSerializer
 
     @method_decorator(cache_page(60 * 60 * 2))
     def get(self, request, *args, **kwargs):
-        return self.list(request, **args, **kwargs)
+        return self.list(request, *args, **kwargs)
     
     def get_view_name(self):
         """
