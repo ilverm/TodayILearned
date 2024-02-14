@@ -1,6 +1,9 @@
 from posts.models import Post
 from tags.models import Tag
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse as rest_reverse
@@ -41,6 +44,10 @@ class ListCreatePosts(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    @method_decorator(cache_page(60 * 60 * 2))
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
         tag, _ = Tag.objects.get_or_create(name=request.data['tag'])
         serializer = self.get_serializer(data=request.data)
@@ -76,6 +83,10 @@ class ListCreateTags(generics.ListCreateAPIView):
     throttle_classes = [AnonRateThrottle, UserRateThrottle]
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+    @method_decorator(cache_page(60 * 60 * 2))
+    def get(self, request, *args, **kwargs):
+        return self.list(request, **args, **kwargs)
     
     def get_view_name(self):
         """
