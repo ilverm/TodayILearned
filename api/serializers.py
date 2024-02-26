@@ -1,16 +1,27 @@
+import re
+
 from rest_framework import serializers
+from rest_framework.reverse import reverse as rest_reverse
 
 from django.utils.html import strip_tags
 
 from posts.models import Post
 from tags.models import Tag
 
+class ConditionalHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
+
+    def to_representation(self, value):
+        context = self.context.get('request')
+        if context and context.resolver_match.view_name == 'api_singletag':
+            return  value.id
+        return super().to_representation(value)
+
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=16, allow_blank=False)
     email = serializers.EmailField(allow_blank=False)
 
 class TagSerializer(serializers.ModelSerializer):
-    id = serializers.HyperlinkedIdentityField(view_name='api_singletag')
+    id = ConditionalHyperlinkedIdentityField(view_name='api_singletag')
     name = serializers.CharField(max_length=80, allow_blank=False)
     created_at = serializers.DateField(read_only=True, format='%d %B %Y')
 

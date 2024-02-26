@@ -2,9 +2,10 @@ from users.models import CustomUser
 from tags.models import Tag
 from api.serializers import PostSerializer, TagSerializer
 
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 from rest_framework.reverse import reverse as rest_reverse
 
@@ -141,6 +142,7 @@ class ListCreateTags(APITestCase):
             password='test-insecure1'
         )
         self.post_data = {
+            'id': 1,
             'name': 'temp'
         }
 
@@ -159,14 +161,33 @@ class ListCreateTags(APITestCase):
         This test ensures the correct functionality of the
         TagSerializer by assessing its behavior.
         """
-        factory = APIRequestFactory()
-        url = rest_reverse('api_tags')
-        request = factory.get(url)
-        context = {'request': request}
-        serializer = TagSerializer(data=self.post_data, context=context)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            self.assertIn(self.post_data['name'], serializer.data.values())
+        self.tag = Tag.objects.create(
+            name='Temp'
+        )
+
+        # This value can be either 'api_singletag'
+        # or 'api_tags'
+        view_name = 'api_singletag'
+
+        # As in view_name, this can either be 'api_singletag'
+        # or 'api_tags'
+        request = self.client.get(rest_reverse('api_singletag', args=[self.tag.id]))
+        request.resolver_match = Mock(view_name='api_singletag')
+
+        # wsgi_request gives us access to the original
+        # Django HttpRequest .
+        # The "request" variable, in this case, is a DRF
+        # Request class which is a subclass of Django
+        # HttpRequest
+        context = {'request': request.wsgi_request}
+        serializer = TagSerializer(instance=self.tag, context=context)
+
+        result = serializer.fields['id'].to_representation(self.tag)
+
+        if view_name == 'api_singletag':
+            self.assertEqual(result, self.tag.id)
+        if view_name == 'api_tags':
+            self.assertEqual(result, f'http://testserver/api/tags/{self.tag.id}/')
 
     def test_tag_delete_endpoint(self):
         self.client.force_authenticate(user=self.user)
