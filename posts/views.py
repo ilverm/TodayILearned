@@ -17,7 +17,7 @@ from users.forms import CustomUserCreationForm
 User = get_user_model()
 
 def home_page(request):
-    post_qs = Post.objects.filter(private=False)
+    post_qs = Post.objects.filter(private=False).order_by('-created_at')
     context = {'post_qs': post_qs}
     return render(request, 'home.html', context=context)
 

@@ -150,6 +150,9 @@ LOGOUT_REDIRECT_URL = 'home'
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'silver',
+    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
+    "code,help,wordcount",
 }
 
 REST_FRAMEWORK = {
