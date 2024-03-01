@@ -51,7 +51,7 @@ class SinglePostSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=100)
     content = serializers.CharField()
-    created_at = serializers.DateTimeField(format='%d %B %Y - %H:%M:%S', read_only=True)
+    created_at = serializers.DateField(format='%d %B %Y - %H:%M:%S', read_only=True)
     source = serializers.URLField()
     author = UserSerializer(read_only=True)
     tag = TagSerializer()

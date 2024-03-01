@@ -1,4 +1,5 @@
 asgiref==3.7.2
+beautifulsoup4==4.12.3
 certifi==2023.11.17
 charset-normalizer==3.3.2
 crispy-bootstrap5==0.7
@@ -14,6 +15,7 @@ python-dotenv==1.0.0
 pytz==2023.3.post1
 requests==2.31.0
 six==1.16.0
+soupsieve==2.5
 sqlparse==0.4.4
 typing_extensions==4.10.0
 urllib3==2.1.0
