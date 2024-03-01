@@ -6,10 +6,12 @@
     {% csrf_token %}
     <p>
         <strong>Likes </strong>{{ single_post.likes }}
-        {% if not liked %}
-            <input type="submit" value="Like" name="like">
-        {% else %}
-        <input type="submit" value="Dislike" name="dislike">
+        {% if request.user.is_authenticated %}
+            {% if not liked %}
+                <input type="submit" value="Like" name="like">
+            {% else %}
+            <input type="submit" value="Dislike" name="dislike">
+            {% endif %}
         {% endif %}
     </p>
 </form>

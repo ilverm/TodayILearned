@@ -1,12 +1,15 @@
 import unittest
 
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 
 from tags.models import Tag
+from likes.models import Like
 
 from .models import Post
+from .views import single_post_view
 from .forms import PostForm
 
 User = get_user_model()
@@ -14,9 +17,12 @@ User = get_user_model()
 class PostViewsTest(TestCase):
 
     def setUp(self):
-        self.test_user = User.objects.create(email='temp@temp.com', password='temptemp')
+        self.test_user = User.objects.create(
+            email='temp@temp.com', 
+            password='temptemp',
+            username='test_username',
+        )
         self.client = Client()
-        self.client.force_login(self.test_user)
 
     def test_home_page_uses_correct_template(self):
         response = self.client.get(reverse('home'))
@@ -81,15 +87,48 @@ class PostViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         # add more tests when login functionality is created
 
-    def test_single_post_view(self):
+    def test_single_post_view_get_method_anonymous_user(self):
+        """
+        Check if the get method of the single_post_view
+        works correctly with anonymous user
+        """
+        factory = RequestFactory()
         post = Post.objects.create(
             title='Test Post',
             content='Content',
             source='http://www.temp.com',
             author=self.test_user
         )
-        response = self.client.get(reverse('single_post', args=(post.pk,)))
+        request = factory.get(reverse('single_post', args=(post.pk,)))
+        request.user = AnonymousUser()
+        response = single_post_view(request, post.pk)
         self.assertEqual(response.status_code, 200)
+
+    def test_single_post_view_post_method_authenticated_user(self):
+        """
+        Check if the post method of the single_post_view
+        works correctly with authenticated user
+        """
+        factory = RequestFactory()
+        post = Post.objects.create(
+            title='Test Post',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+        )
+        like = Like.objects.create(
+            user=self.test_user,
+            post=post,
+            liked=False,
+        )
+        post_data = {'like': 'Like'}
+        self.assertEqual(post.likes, 0)
+        request = factory.post(reverse('single_post', args=[post.pk]), post_data)
+        request.user = self.test_user
+        response = single_post_view(request, post.pk)
+        self.assertEqual(response.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.likes, 1)
 
 class PostModelTest(TestCase):
 

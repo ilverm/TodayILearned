@@ -3,7 +3,7 @@ from django.db import models
 from tags.models import Tag
 
 class Post(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.TextField()
     content = models.TextField()
     created_at = models.DateField(auto_now_add=True)
     source = models.URLField()

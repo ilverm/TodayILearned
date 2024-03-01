@@ -43,29 +43,25 @@ def create_post(request):
             return HttpResponseRedirect(reverse('home'))
     return render(request, 'create.html', {'form': form})
 
-@login_required
 def single_post_view(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
-    user = request.user
-    like, _ = Like.objects.get_or_create(user=user, post=post)
-    if request.method == 'POST':
+    context = {'single_post': post, 'likes': post.likes}
+    if request.method == 'POST' and request.user.is_authenticated:
         # Check if the user has already liked or disliked the post
+        like, _ = Like.objects.get_or_create(user=request.user, post=post)
         if 'like' in request.POST:
             post.likes = F('likes') + 1
             like.liked = True
         if 'dislike' in request.POST:
             post.likes = F('likes') - 1
             like.liked = False
-            
-    post.save()
-    post.refresh_from_db()
-    like.save()
 
-    context = {
-        'single_post': post, 
-        'likes': post.likes,
-        'liked': like.liked,
-        }
+        context['liked'] = like.liked
+            
+        post.save()
+        post.refresh_from_db()
+        like.save()
+
     return render(request, 'single_post.html', context=context)
 
 def create_account(request):
