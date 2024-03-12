@@ -1,4 +1,4 @@
-/* home.html */
+/* base.html */
 
 .main-nav-col {
     padding: 0% !important;
@@ -10,26 +10,41 @@
 
 .main-nav {
     background-color: rgb(13, 110, 253);
-    height: 3rem;
+    /* background-color: white; */
 }
 
 .nav-container-fluid {
     padding: 0% !important;
 }
 
+.nav-api-link {
+    color: black;
+    text-decoration: none;
+}
+
 .nav-home {
-    color: white !important;
+    color: black !important;
+    font-size: 46px !important;
+    text-decoration: none;
+}
+
+/* home.html */
+
+.each-object {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.each-object:hover {
+    background-color: #f2f3f2;
+    /* background-color: bisque; */
+    transition: all .5s;
 }
 
 .main-col {
-    border-color: black;
+    border-color: white;
     border-style: solid;
     border-width: 1px;
-}
-
-.nav-api-link {
-    color: white;
-    text-decoration: none;
 }
 
 /* doesnt work */
@@ -38,8 +53,16 @@
     font-weight: bold !important;
 }
 
-.title-home {
+.link-title-home {
     text-decoration: none;
     color: black;
     font-weight: bold;
+}
+
+.home-title {
+    margin-bottom: 5px !important;
+}
+
+.likes-home {
+    margin-left: 5px;
 }
