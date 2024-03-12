@@ -1,17 +1,18 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
-<strong>{{ single_post }}</strong>
-<p>{{ single_post.content|safe }}</p>
-<form action="" method="post">
-    {% csrf_token %}
-    <p>
-        <strong>Likes </strong>{{ single_post.likes }}
-        {% if not liked %}
-            <input type="submit" value="Like" name="like">
-        {% else %}
-        <input type="submit" value="Dislike" name="dislike">
-        {% endif %}
-    </p>
-</form>
 
-<a href="{% url 'home' %}">All posts</a>
+{% block body %}
+    <strong>{{ single_post }}</strong>
+    <p>{{ single_post.content|safe }}</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>
+            <strong>Likes </strong>{{ single_post.likes }}
+            {% if not liked %}
+                <input type="submit" value="Like" name="like">
+            {% else %}
+            <input type="submit" value="Dislike" name="dislike">
+            {% endif %}
+        </p>
+    </form>
+{% endblock body %}

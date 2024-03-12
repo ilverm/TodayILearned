@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
+from django.db.models import F, Count
 
 from .models import Post
 from .forms import PostForm
@@ -18,7 +18,8 @@ User = get_user_model()
 
 def home_page(request):
     post_qs = Post.objects.filter(private=False).order_by('-created_at')
-    context = {'post_qs': post_qs}
+    no_posts_per_tags = Tag.objects.annotate(num_posts=Count('posts_tag'))[:9]
+    context = {'post_qs': post_qs, 'posts_per_tag': no_posts_per_tags}
     return render(request, 'home.html', context=context)
 
 @login_required
