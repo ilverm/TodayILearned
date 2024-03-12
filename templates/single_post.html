@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'home.html' %}
 
-
+{% block single_post %}
 <strong>{{ single_post }}</strong>
 <p>{{ single_post.content|safe }}</p>
 <form action="" method="post">
@@ -16,5 +16,5 @@
         {% endif %}
     </p>
 </form>
-
+{% endblock single_post %}
 <a href="{% url 'home' %}">All posts</a>

@@ -150,6 +150,7 @@ class PostModelTest(TestCase):
         self.assertEqual(self.post.source, 'http://www.temp.com')
         self.assertEqual(self.post.author, self.test_user)
         self.assertEqual(self.post.tag.name, 'Temp')
+        self.assertEqual(self.post.slug, 'temp')
 
     def test_post_str_method(self):
         self.assertEqual(str(self.post), 'temp')

@@ -106,7 +106,7 @@ class LikeModelTest(TestCase):
         user1 = CustomUser.objects.create(username='test1', email='test1@test.com')
         user2 = CustomUser.objects.create(username='test2', email='test2@test.com')
         post = Post.objects.create(
-            title='temp',
+            title='temp_temp',
             content='content',
             source='http://www.temp.com',
             author=user1,
