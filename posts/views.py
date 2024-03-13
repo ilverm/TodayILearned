@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import F, Count
+from django.db.models import Q, F, Count
 
 from .models import Post
 from .forms import PostForm
@@ -21,6 +21,20 @@ def home_page(request):
     no_posts_per_tags = Tag.objects.annotate(num_posts=Count('posts_tag'))[:9]
     context = {'post_qs': post_qs, 'posts_per_tag': no_posts_per_tags}
     return render(request, 'home.html', context=context)
+
+def search(request):
+    searched = request.GET.get('q')
+    try:
+        qs = Post.objects.filter(
+            Q(title__icontains=searched) | 
+            Q(content__icontains=searched) | 
+            Q(tag__name__icontains=searched))
+        context = {
+            'searched': qs
+        }
+        return render(request, 'searched.html', context=context)
+    except ValueError:
+        return render(request, 'searched.html')
 
 @login_required
 def create_post(request):

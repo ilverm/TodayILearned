@@ -9,7 +9,7 @@ from tags.models import Tag
 from likes.models import Like
 
 from .models import Post
-from .views import single_post_view
+from .views import single_post_view, search
 from .forms import PostForm
 
 User = get_user_model()
@@ -129,6 +129,23 @@ class PostViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         post.refresh_from_db()
         self.assertEqual(post.likes, 1)
+
+    def test_search_view(self):
+        first_post = Post.objects.create(
+            title='Test Post 1',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+        )
+        second_post = Post.objects.create(
+            title='Test Post 2',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+        )
+        request = self.client.get(reverse('search'), {'q': '1'})
+        self.assertIn(Post.objects.first(), request.context['searched'])
+        self.assertNotIn(Post.objects.last(), request.context['searched'])
 
 class PostModelTest(TestCase):
 

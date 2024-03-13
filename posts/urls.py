@@ -7,6 +7,7 @@ from posts import views
 urlpatterns = [
     path('', views.home_page, name='home'),
     path('create/', views.create_post, name='create'),
+    path('search/', views.search, name='search'),
     path('<int:post_pk>/', views.single_post_view, name='single_post'),
     path('accounts/login/', auth_views.LoginView.as_view(
         template_name='registration/login.html'), 
