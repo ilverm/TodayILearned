@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Count
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
 from .forms import PostForm
@@ -62,7 +63,11 @@ def create_post(request):
 
 def single_post_view(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    context = {'single_post': post, 'likes': post.likes}
+    try:
+        liked = Like.objects.get(post=post).liked
+    except ObjectDoesNotExist:
+        liked = False
+    context = {'single_post': post, 'likes': post.likes, 'liked': liked}
     if request.method == 'POST' and request.user.is_authenticated:
         # Check if the user has already liked or disliked the post
         like, _ = Like.objects.get_or_create(user=request.user, post=post)
