@@ -2,6 +2,8 @@ import unittest
 
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
+from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 
@@ -9,10 +11,20 @@ from tags.models import Tag
 from likes.models import Like
 
 from .models import Post
-from .views import single_post_view, search
+from .views import single_post_view
 from .forms import PostForm
 
 User = get_user_model()
+
+class TestForm(PostForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['slug'].max_length = 8
+
+    def clean_slug(self):
+        self.cleaned_data['slug'] = slugify(self.cleaned_data.get('slug'))
+        if len(self.cleaned_data['slug']) > 8:
+            raise ValidationError('Slug cannot be longer than 8 characters.')
 
 class PostViewsTest(TestCase):
 
@@ -34,6 +46,7 @@ class PostViewsTest(TestCase):
         # is set to False, then it is considered public.
         Post.objects.create(
             title='Test Post 1',
+            slug='test-post-1',
             content='content', 
             source='http://www.temp.com', 
             author=self.test_user,
@@ -41,6 +54,7 @@ class PostViewsTest(TestCase):
         )
         Post.objects.create(
             title='Test Post 2',
+            slug='test-post-2',
             content='content',
             source='http://www.temp.com', 
             author=self.test_user,
@@ -57,6 +71,7 @@ class PostViewsTest(TestCase):
         # Create some test data
         Post.objects.create(
             title='Test Post 1',
+            slug='test-post-1',
             content='content',
             source='http://www.temp.com',
             author=self.test_user,
@@ -64,6 +79,7 @@ class PostViewsTest(TestCase):
         )
         Post.objects.create(
             title='Test Post 2',
+            slug='test-post-2',
             content='content',
             source='http://www.temp.com',
             author=self.test_user,
@@ -95,13 +111,14 @@ class PostViewsTest(TestCase):
         factory = RequestFactory()
         post = Post.objects.create(
             title='Test Post',
+            slug='test-post',
             content='Content',
             source='http://www.temp.com',
             author=self.test_user
         )
-        request = factory.get(reverse('single_post', args=(post.pk,)))
+        request = factory.get(reverse('single_post', args=(post.slug,)))
         request.user = AnonymousUser()
-        response = single_post_view(request, post.pk)
+        response = single_post_view(request, post.slug)
         self.assertEqual(response.status_code, 200)
 
     def test_single_post_view_post_method_authenticated_user(self):
@@ -112,6 +129,7 @@ class PostViewsTest(TestCase):
         factory = RequestFactory()
         post = Post.objects.create(
             title='Test Post',
+            slug='test-post',
             content='Content',
             source='http://www.temp.com',
             author=self.test_user,
@@ -123,9 +141,9 @@ class PostViewsTest(TestCase):
         )
         post_data = {'like': 'Like'}
         self.assertEqual(post.likes, 0)
-        request = factory.post(reverse('single_post', args=[post.pk]), post_data)
+        request = factory.post(reverse('single_post', args=[post.slug]), post_data)
         request.user = self.test_user
-        response = single_post_view(request, post.pk)
+        response = single_post_view(request, post.slug)
         self.assertEqual(response.status_code, 200)
         post.refresh_from_db()
         self.assertEqual(post.likes, 1)
@@ -133,12 +151,14 @@ class PostViewsTest(TestCase):
     def test_search_view(self):
         first_post = Post.objects.create(
             title='Test Post 1',
+            slug='test-post-1',
             content='Content',
             source='http://www.temp.com',
             author=self.test_user,
         )
         second_post = Post.objects.create(
             title='Test Post 2',
+            slug='test-post-2',
             content='Content',
             source='http://www.temp.com',
             author=self.test_user,
@@ -154,6 +174,7 @@ class PostModelTest(TestCase):
         self.tag = Tag.objects.create(name='Temp')
         self.post = Post.objects.create(
             title='temp',
+            slug='temp',
             content='content',
             source='http://www.temp.com', 
             author=self.test_user,
@@ -205,6 +226,7 @@ class PostFormTest(TestCase):
         # Test the clean tag method with invalid data
         form_data = {
             'title': 'temp_title',
+            'slug': 'temp-title',
             'content': 'content',
             'source': 'http://www.test.com',
             'tag': 'Test tag'
@@ -214,3 +236,27 @@ class PostFormTest(TestCase):
         form.is_valid()
         # Check that the clean method raises a ValidationError
         self.assertIn('tag', form.errors)
+
+    def test_clean_valid_slug(self):
+        form_data = {
+            'title': 'temp title',
+            'slug': 'temp-title',
+            'content': 'content',
+            'source': 'http://www.test.com',
+            'tag': 'Test'
+        }
+        form = PostForm(data=form_data)
+        form.is_valid()
+        self.assertIsNone(form.errors.get('slug'))
+
+    def test_clean_invalid_slug(self):
+        form_data = {
+            'title': 'this is a very long title',
+            'slug': 'this-is-a-very-long-title',
+            'content': 'content',
+            'source': 'http://www.test.com',
+            'tag': 'test',
+        }
+
+        form = TestForm(data=form_data)
+        self.assertIsNotNone(form.errors.get('slug'))

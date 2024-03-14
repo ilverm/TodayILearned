@@ -44,12 +44,14 @@ def create_post(request):
         form = PostForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')
+            slug = form.cleaned_data.get('slug')
             content = form.cleaned_data.get('content')
             source = form.cleaned_data.get('source')
             tag = form.cleaned_data.get('tag')
             tag, _ = Tag.objects.get_or_create(name=tag)
             Post.objects.create(
-                title=title, 
+                title=title,
+                slug=slug,
                 content=content, 
                 source=source, 
                 author=request.user, 
@@ -58,8 +60,8 @@ def create_post(request):
             return HttpResponseRedirect(reverse('home'))
     return render(request, 'create.html', {'form': form})
 
-def single_post_view(request, post_pk):
-    post = get_object_or_404(Post, pk=post_pk)
+def single_post_view(request, slug):
+    post = get_object_or_404(Post, slug=slug)
     context = {'single_post': post, 'likes': post.likes}
     if request.method == 'POST' and request.user.is_authenticated:
         # Check if the user has already liked or disliked the post

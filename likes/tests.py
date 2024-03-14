@@ -75,6 +75,7 @@ class LikeModelTest(TestCase):
         """
         post1 = Post.objects.create(
             title='temp1',
+            slug='temp1',
             content='content',
             source='http://www.temp.com',
             author=self.user,
@@ -83,6 +84,7 @@ class LikeModelTest(TestCase):
 
         post2 = Post.objects.create(
             title='temp2',
+            slug='temp2',
             content='content',
             source='http://www.temp.com',
             author=self.user,
@@ -107,6 +109,7 @@ class LikeModelTest(TestCase):
         user2 = CustomUser.objects.create(username='test2', email='test2@test.com')
         post = Post.objects.create(
             title='temp_temp',
+            slug='temp_temp',
             content='content',
             source='http://www.temp.com',
             author=user1,
