@@ -5,6 +5,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from posts import views
 
 urlpatterns = [
+    path('api/', include('api.urls')),
+    
     path('', views.home_page, name='home'),
     path('create/', views.create_post, name='create'),
     path('search/', views.search, name='search'),
@@ -23,7 +25,5 @@ urlpatterns = [
         name='password_change'
     ),
     path('accounts/create/', views.create_account, name='create_account'),
-
-    path('api/', include('api.urls')),
     
 ]

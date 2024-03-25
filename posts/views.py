@@ -25,8 +25,9 @@ def home_page(request):
 
 def search(request):
     searched = request.GET.get('q')
+    not_private = Post.objects.filter(private=False)
     try:
-        qs = Post.objects.filter(
+        qs = not_private.filter(
             Q(title__icontains=searched) | 
             Q(content__icontains=searched) | 
             Q(tag__name__icontains=searched))

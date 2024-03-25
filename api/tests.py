@@ -1,6 +1,9 @@
+from collections import OrderedDict
+
 from users.models import CustomUser
 from tags.models import Tag
-from api.serializers import PostSerializer, TagSerializer
+from posts.models import Post
+from api.serializers import PostSerializer, TagSerializer, SinglePostSerializer
 
 from unittest.mock import patch, Mock
 
@@ -10,6 +13,87 @@ from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 from rest_framework.reverse import reverse as rest_reverse
 
 import unittest
+
+class SerializersTest(APITestCase):
+
+    def setUp(self):
+        self.user = CustomUser.objects.create(
+            username='testuser',
+            email='temp@temp.com',
+            password='test-insecure1',
+        )
+        self.tag = Tag.objects.create(name='test_tag')
+        self.post_data = {
+            'id': 'http://testserver/api/posts/1/',
+            'title': 'test title',
+            'slug': 'test-title',
+            'content': 'test content',
+            'source': 'http://www.test.com',
+            'author': self.user.email,
+            'tag': self.tag.name
+        }   
+
+    def test_PostSerializer_post_endpoint(self):
+        """
+        This test ensures the correct functionality of the
+        PostSerializer by assessing its behavior.
+        """
+        factory = APIRequestFactory()
+        request = factory.post(rest_reverse('api_posts'), self.post_data)
+        context = {'request': request}
+        serializer = PostSerializer(data=self.post_data, context=context)
+        if serializer.is_valid(raise_exception=True):
+            # is self.post_data['id'][-2] ok to do?
+            serializer.save(id=self.post_data['id'][-2], tag=self.tag, author=self.user)
+            self.assertEqual(self.post_data, serializer.data)
+
+    def test_PostSerializer_post_endpoint_with_missing_argument(self):
+        """
+        This test ensures the correct functionality of the
+        PostSerializer by assessing its behavior when a
+        required argument, specifically "title", is
+        missing from the provided data.
+        """
+        self.client.force_authenticate(user=self.user)
+        post_data = {
+            'slug': 'test-slug',
+            'content': 'test content',
+            'source': 'http://www.test.com',
+            'author': self.user,
+            'tag': self.tag.name,
+        }
+        serializer = PostSerializer(data=post_data)
+        self.assertFalse(serializer.is_valid())
+
+    def test_SinglePostSerializer_update_method(self):
+        tag = Tag.objects.create(
+            name='test'
+        )
+        instance = Post.objects.create(
+            title='test title',
+            slug='test-title',
+            content='content',
+            source='http://www.test.com',
+            author=self.user,
+            tag=tag
+        )
+        
+        updated_data = {
+            'title': 'new title',
+            'slug': instance.slug,
+            'content': instance.content,
+            'source': instance.source,
+            'author': self.user,
+            'tag': OrderedDict([('name', 'new_tag')])
+        }
+        serializer = SinglePostSerializer(instance=instance, data=updated_data, partial=True)
+        self.assertTrue(serializer.is_valid(raise_exception=True))
+        serializer.save()
+
+        instance.refresh_from_db()
+
+        self.assertEqual(instance.title, 'new title')
+        self.assertEqual(instance.tag.name, 'new_tag')
 
 class ListCreatePosts(APITestCase):
 
@@ -24,6 +108,7 @@ class ListCreatePosts(APITestCase):
         self.post_data = {
             'id': 'http://testserver/api/posts/1/',
             'title': 'test title',
+            'slug': 'test-title',
             'content': 'test content',
             'source': 'http://www.test.com',
             'author': self.user.email,
@@ -66,37 +151,6 @@ class ListCreatePosts(APITestCase):
         response = self.client.get(rest_reverse('api_posts'))
         # Request should fail
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
-
-    def test_serializer_post_endpoint(self):
-        """
-        This test ensures the correct functionality of the
-        PostSerializer by assessing its behavior.
-        """
-        factory = APIRequestFactory()
-        request = factory.post(rest_reverse('api_posts'), self.post_data)
-        context = {'request': request}
-        serializer = PostSerializer(data=self.post_data, context=context)
-        if serializer.is_valid(raise_exception=True):
-            # is self.post_data['id'][-2] ok to do?
-            serializer.save(id=self.post_data['id'][-2], tag=self.tag, author=self.user)
-            self.assertEqual(self.post_data, serializer.data)
-
-    def test_serializer_with_missing_argument_post_endpoint(self):
-        """
-        This test ensures the correct functionality of the
-        PostSerializer by assessing its behavior when a
-        required argument, specifically "title", is
-        missing from the provided data.
-        """
-        self.client.force_authenticate(user=self.user)
-        post_data = {
-            'content': 'test content',
-            'source': 'http://www.test.com',
-            'author': self.user,
-            'tag': self.tag.name,
-        }
-        serializer = PostSerializer(data=post_data)
-        self.assertFalse(serializer.is_valid())
 
     def test_post_endpoint_with_logged_in_user(self):
         """
