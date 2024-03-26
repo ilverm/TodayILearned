@@ -18,7 +18,7 @@ def remove_links(value):
             link.replace_with(link.text)
             value = str(soup)
     except Exception as e:
-        # Handle specific exceptions (e.g., BeautifulSoup's exceptions) here
+        # Is there a more specific exception?
         print(f"An error occurred: {e}")
 
     return value

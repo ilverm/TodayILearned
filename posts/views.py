@@ -19,8 +19,8 @@ User = get_user_model()
 
 def home_page(request):
     post_qs = Post.objects.filter(private=False).order_by('-created_at')
-    no_posts_per_tags = Tag.objects.annotate(num_posts=Count('posts_tag'))[:9]
-    context = {'post_qs': post_qs, 'posts_per_tag': no_posts_per_tags}
+    no_posts_per_tag = Tag.objects.annotate(num_posts=Count('posts_tag'))[:10]
+    context = {'post_qs': post_qs, 'posts_per_tag': no_posts_per_tag}
     return render(request, 'home.html', context=context)
 
 def search(request):

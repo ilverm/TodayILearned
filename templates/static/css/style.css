@@ -9,8 +9,8 @@
 }
 
 .main-nav {
-    background-color: rgb(13, 110, 253);
-    /* background-color: white; */
+    /* background-color: rgb(13, 110, 253); */
+    background-color: white;
 }
 
 .nav-container-fluid {
@@ -24,9 +24,42 @@
 
 .nav-home {
     color: black !important;
-    font-size: 46px !important;
+    font-size: 48px !important;
     text-decoration: none;
 }
+
+.user-dropdown {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    padding-top: 0% !important;
+    padding-bottom: 0% !important;
+    border: 0px !important;
+}
+
+/* .bi-person {
+    margin-bottom: 5px !important;
+} */
+
+ul.dropdowns > li a:focus {
+    background-color: rgba(0, 0, 0, 0.175) !important;
+    color: black !important;
+}
+
+.search-bar {
+    border-radius: 50px 0px 0px 50px !important;
+    background-color: white !important;
+}
+
+.search-icon {
+    border-radius: 0px 50px 50px 0px !important;
+    border: 1px solid;
+    border-color: #dee2e6 !important;
+}
+
+.search-bar:focus {
+    border-color: #dee2e6 !important;
+    box-shadow: none !important;
+  }
 
 /* home.html */
 
@@ -48,9 +81,9 @@
 }
 
 /* doesnt work */
-.tag_simesince {
-    font-size: 1px !important;
-    font-weight: bold !important;
+.tag_timesince {
+    font-size: 12px !important;
+    color: rgb(87, 111, 118)
 }
 
 .link-title-home {
@@ -64,5 +97,6 @@
 }
 
 .likes-home {
-    margin-left: 5px;
+    font-size: 12px !important;
+    color: rgb(87, 111, 118)
 }
