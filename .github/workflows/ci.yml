@@ -12,31 +12,62 @@ jobs:
     env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         PYTHON_VERSION: "3.10"
+
     services:
         mysql:
             image: mysql:latest
+            env:
+                MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+                MYSQL_USER: ${{ secrets.DB_USER }}
+                MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
             ports:
                 - 3306:3306
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+
+    - uses: browser-actions/setup-firefox@v1
+    - run: firefox --version
+
+    - name: Start MySQL Service
+      run: sudo systemctl start mysql
+
+    - name: Wait for MySQL to start
+      run: |
+        timeout=30
+        while ! mysqladmin ping -h localhost --silent; do
+            (( timeout-- ))
+            if [ $timeout -eq 0 ]; then
+                echo "Failed to start MySQL"
+                exit 1
+            fi
+            sleep 1
+        done
+
+    - name: Initialize Database
+      run: |
+        mysql -h localhost -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
+
     - name: Run tests
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DB_ENGINE: ${{ secrets.DB_ENGINE }}
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_HOST: localhost
         DB_PORT: 3306
+        DB_NAME: ${{ secrets.DB_NAME }}
       run: |
-        sudo /etc/init.d/mysql start
-        mysql -h localhost -e 'CREATE DATABASE TempDB;' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
         python manage.py test
+
+
