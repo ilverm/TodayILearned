@@ -2,7 +2,7 @@
 <form method="post" action="{% url 'create_account' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create account</button>
+    <button type="submit" value="create_account">Create account</button>
 </form>
 
 <a href="{% url 'home' %}">Home</a>
