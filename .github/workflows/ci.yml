@@ -43,7 +43,7 @@ jobs:
         DB_PORT: 8000
 
       run: |
-        sudo /etc/init.d/mysql start
+        sudo systemctl start mysql
         mysql -h localhost -e "CREATE DATABASE ${{ secrets.DB_NAME }};" -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
         python manage.py test
 
