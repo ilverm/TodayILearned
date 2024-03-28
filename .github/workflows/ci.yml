@@ -43,18 +43,6 @@ jobs:
     - name: Start MySQL Service
       run: sudo systemctl start mysql
 
-    - name: Wait for MySQL to start
-      run: |
-        timeout=30
-        while ! mysqladmin ping -h localhost --silent; do
-            (( timeout-- ))
-            if [ $timeout -eq 0 ]; then
-                echo "Failed to start MySQL"
-                exit 1
-            fi
-            sleep 1
-        done
-
     - name: Initialize Database
       run: |
         mysql -h localhost -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};"
