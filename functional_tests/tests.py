@@ -9,8 +9,6 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-MAX_WAIT = 10
-
 class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
@@ -65,7 +63,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('test title', title_text)
 
         # Check if author is set correctly
-        author_text = self.browser.find_element(By.CLASS_NAME, 'tag_timesince').text
+        author_text = self.browser.find_element(By.CLASS_NAME, 'home-author').text
         self.assertIn('test@test.com', author_text)
 
         # Check if the search bar works correctly

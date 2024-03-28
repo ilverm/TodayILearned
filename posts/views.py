@@ -62,8 +62,8 @@ def create_post(request):
             return HttpResponseRedirect(reverse('home'))
     return render(request, 'create.html', {'form': form})
 
-def single_post_view(request, slug):
-    post = get_object_or_404(Post, slug=slug)
+def single_post_view(request, year, slug):
+    post = get_object_or_404(Post, created_at__year=year, slug=slug)
     try:
         liked = Like.objects.get(post=post).liked
     except ObjectDoesNotExist:
@@ -95,3 +95,15 @@ def create_account(request):
             return HttpResponseRedirect(reverse('login'))
     form = CustomUserCreationForm()
     return render(request, 'registration/create_account.html', {'form': form})
+
+def tag_view(request, tag):
+    if request.method == 'GET':
+        posts_filtered_by_tag = Post.objects.filter(tag__name=tag)
+        context = {'posts': posts_filtered_by_tag, 'tag': tag}
+        return render(request, 'filtered_by_tag.html', context=context)
+    
+def author_view(request, author):
+    if request.method == 'GET':
+        posts_filtered_by_author = Post.objects.filter(author__username=author)
+        context = {'posts': posts_filtered_by_author, 'author': author}
+        return render(request, 'filtered_by_author.html', context=context)

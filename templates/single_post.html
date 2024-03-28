@@ -1,5 +1,7 @@
 {% extends 'home.html' %}
 
+{% block title %}{{ single_post.title }} - TodayILearned{% endblock title %}
+
 {% block single_post %}
 <strong>{{ single_post }}</strong>
 <p>{{ single_post.content|safe }}</p>

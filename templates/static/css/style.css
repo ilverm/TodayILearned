@@ -61,6 +61,11 @@ ul.dropdowns > li a:focus {
     box-shadow: none !important;
   }
 
+.home-each-tag {
+    text-decoration: none;
+    color: black;
+}
+
 /* home.html */
 
 .each-object {
@@ -80,10 +85,15 @@ ul.dropdowns > li a:focus {
     border-width: 1px;
 }
 
-/* doesnt work */
-.tag_timesince {
+.tag-timesince,
+.home-tag {
     font-size: 12px !important;
-    color: rgb(87, 111, 118)
+    color: rgb(87, 111, 118);
+    text-decoration: none;
+}
+
+.tag-timesince:hover {
+    text-decoration: underline;
 }
 
 .link-title-home {
@@ -96,7 +106,12 @@ ul.dropdowns > li a:focus {
     margin-bottom: 5px !important;
 }
 
-.likes-home {
+.home-author {
     font-size: 12px !important;
-    color: rgb(87, 111, 118)
+    color: rgb(87, 111, 118);
+    text-decoration: none;
+}
+
+.home-author:hover {
+    text-decoration: underline;
 }

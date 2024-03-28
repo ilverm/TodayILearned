@@ -2,9 +2,10 @@
 {% load remove_links %}
 {% load remove_margins %}
 
+{% block title %}{{ tag }} - TodayILearned{% endblock title %}
+
 {% block single_post %}
-{% if searched %}
-    {% for obj in searched %}
+    {% for obj in posts %}
         <div class="each-object rounded">
             <div class="d-flex align-items-center" style="font-size: 12px; margin-top: 10px;">
                 <span class="tag_timesince">
@@ -30,11 +31,5 @@
                 </span>
             </div>
         </div>
-        {% if not forloop.last %}
-            <hr style="margin-top: 10px; margin-bottom: 10px;">
-        {% endif %}
     {% endfor %}
-{% else %}
-    <p>0 results</p>
-{% endif %}
 {% endblock single_post %}

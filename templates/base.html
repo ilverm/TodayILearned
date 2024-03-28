@@ -63,7 +63,7 @@
                         <!-- tags nav bar -->
                         <div class="d-lg-flex justify-content-around tag-nav-bar" style="margin-top: 10px;">
                             {% for obj in posts_per_tag %}
-                                <span>{{ obj }}</span>
+                                <a class="home-each-tag" href="{% url 'tag_view' obj %}">{{ obj }}</a>
                             {% endfor %}
                         </div>
 
