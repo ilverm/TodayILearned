@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
+  workflow_dispatch:
     branches:
       - master
-  workflow_dispatch:
 
 jobs:
   test:
@@ -15,8 +15,13 @@ jobs:
     services:
         mysql:
             image: mysql:latest
+            env:
+                DB_ENGINE: ${{ secrets.DB_ENGINE }}
+                DB_USER: ${{ secrets.DB_USER }}
+                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                DB_NAME: ${{ secrets.DB_NAME }}
             ports:
-                - 3306:3306
+                - 8000
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -27,16 +32,20 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+    - name: Setup Firefox
+      uses: browser-action/setup-firefox
+      run: 
     - name: Run tests
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DB_ENGINE: ${{ secrets.DB_ENGINE }}
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ secrets.DB_NAME }}
         DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: 3306
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_PORT: 8000
+
       run: |
         sudo /etc/init.d/mysql start
-        mysql -h localhost -e 'CREATE DATABASE TempDB;' -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
+        mysql -h localhost -e "CREATE DATABASE ${{ secrets.DB_NAME }};" -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }}
         python manage.py test
