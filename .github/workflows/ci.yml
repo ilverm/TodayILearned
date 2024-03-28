@@ -33,7 +33,7 @@ jobs:
       run: |
         pip install -r requirements.txt
     - name: Setup Firefox
-      uses: browser-action/setup-firefox
+      uses: browser-actions/setup-firefox@v1
     - name: Run tests
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
