@@ -21,7 +21,7 @@ jobs:
                 DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
                 DB_NAME: ${{ secrets.DB_NAME }}
             ports:
-                - 8000
+                - 3306
 
     steps:
     - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_NAME: ${{ secrets.DB_NAME }}
-        DB_PORT: 8000
+        DB_PORT: 3306
 
       run: |
         sudo /etc/init.d/mysql start
