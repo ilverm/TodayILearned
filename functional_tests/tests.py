@@ -12,11 +12,7 @@ from selenium.webdriver.common.by import By
 class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
-        options = webdriver.FirefoxOptions()
-        options.add_argument('--headless=new')
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        self.browser = webdriver.Firefox(options=options)
+        self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(10)
 
         # Sets up a logged-in user for testing.
