@@ -12,7 +12,9 @@ from selenium.webdriver.common.by import By
 class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        options = webdriver.FirefoxOptions()
+        options.add_argument("--headless")
+        self.browser = webdriver.Firefox(options=options)
         self.browser.implicitly_wait(10)
 
         # Sets up a logged-in user for testing.
