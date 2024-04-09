@@ -14,7 +14,7 @@
             </div>
             <div class="d-flex">
                 <strong>
-                    <a class="link-title-home" href="{% url 'single_post' obj.created_at.year obj.author %}">
+                    <a class="link-title-home" href="{% url 'single_post' obj.created_at.year obj.slug %}">
                         <p class="text-start home-title">{{ obj.title }}</p>
                     </a>
                 </strong>
