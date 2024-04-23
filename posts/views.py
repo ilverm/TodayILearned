@@ -7,7 +7,7 @@ from django.db.models import Q, F, Count
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, UpdatePostForm
 
 from likes.models import Like
 
@@ -102,8 +102,45 @@ def tag_view(request, tag):
         context = {'posts': posts_filtered_by_tag, 'tag': tag}
         return render(request, 'filtered_by_tag.html', context=context)
     
-def author_view(request, author):
+def personal_page(request, username):
     if request.method == 'GET':
-        posts_filtered_by_author = Post.objects.filter(author__username=author)
-        context = {'posts': posts_filtered_by_author, 'author': author}
-        return render(request, 'filtered_by_author.html', context=context)
+        posts_filtered_by_author = Post.objects.filter(author__username=username)
+        context = {'posts': posts_filtered_by_author, 'username': username}
+        return render(request, 'personal_page.html', context=context)
+    
+@login_required
+def delete_article(request, slug):
+    try:
+        Post.objects.get(author=request.user, slug=slug).delete()
+        return HttpResponseRedirect(reverse('personal_page', kwargs={'username': request.user.username}))
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect(reverse('home'))
+    
+@login_required
+def update_article(request, slug):
+    try:
+        post = Post.objects.get(author=request.user, slug=slug)
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect(reverse('home'))
+    initial_values = {
+        'title': post.title,
+        'slug': post.slug,
+        'content': post.content,
+        'source': post.source,
+        'tag': post.tag
+    }
+    form = UpdatePostForm(initial=initial_values)
+    if request.method == 'POST':
+        form = UpdatePostForm(request.POST, initial=initial_values)
+        updated_fields = {
+            k: request.POST.get(k) for k in form.changed_data if form.has_changed()
+        }
+        tag, _ = Tag.objects.get_or_create(name=updated_fields['tag'])
+        updated_fields['tag'] = tag
+        Post.objects.filter(author=request.user, slug=slug).update(**updated_fields)
+        return HttpResponseRedirect(reverse('single_post', kwargs={'year': post.created_at.year, 'slug': post.slug}))
+    context = {
+        'form': form,
+        'title': post.title
+    }
+    return render(request, 'update.html', context=context)

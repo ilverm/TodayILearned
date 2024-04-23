@@ -4,6 +4,14 @@
 
 {% block title %}TodayILearned{% endblock title %}
 
+{% block tag_bar %}
+<div class="d-lg-flex justify-content-around tag-nav-bar" style="margin-top: 2rem;">
+    {% for obj in posts_per_tag %}
+        <a class="home-each-tag" href="{% url 'tag_view' obj %}">{{ obj }}</a>
+    {% endfor %}
+</div>
+{% endblock tag_bar %}
+
 {% block body %}
 <!-- TodayILearned navbar  -->
 <div class="container text-center">
@@ -16,7 +24,7 @@
                 <div class="each-object rounded">
                     <div class="d-flex align-items-center" style="margin-top: 10px;">
                         <span>
-                            <a class="home-author" href="{% url 'author_view' obj.author.username %}">{{ obj.author.username }}</a>
+                            <a class="home-author" href="{% url 'personal_page' obj.author.username %}">{{ obj.author.username }}</a>
                         </span>
                     </div>
                     <div class="d-flex">

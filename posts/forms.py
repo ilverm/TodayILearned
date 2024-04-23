@@ -21,3 +21,10 @@ class PostForm(forms.Form):
         if len(self.cleaned_data['slug']) > 50:
             raise ValidationError('Slug cannot be longer than 50 characters')
         return self.cleaned_data['slug']
+    
+class UpdatePostForm(PostForm):
+    title = forms.CharField(label='Title', required=False)
+    slug = forms.CharField(label='Slug', required=False)
+    content = forms.CharField(label='Content', required=False, widget=TinyMCE(attrs={'rows': 20}))
+    source = forms.URLField(label='Source', required=False)
+    tag = forms.CharField(label='Tag', required=False, max_length=25)

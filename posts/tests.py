@@ -11,8 +11,8 @@ from tags.models import Tag
 from likes.models import Like
 
 from .models import Post
-from .views import single_post_view
-from .forms import PostForm
+from .views import single_post_view, delete_article, update_article, personal_page
+from .forms import PostForm, UpdatePostForm
 
 User = get_user_model()
 
@@ -167,6 +167,78 @@ class PostViewsTest(TestCase):
         self.assertIn(Post.objects.first(), request.context['searched'])
         self.assertNotIn(Post.objects.last(), request.context['searched'])
 
+    def test_post_gets_deleted_correctly(self):
+        factory = RequestFactory()
+        post = Post.objects.create(
+            title='Test Post 1',
+            slug='test-post-1',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+        )
+        request = factory.get(reverse('delete', kwargs={'slug': post.slug}))
+        request.user = self.test_user
+        response = delete_article(request, post.slug)
+        qs = Post.objects.all()
+        self.assertEqual(qs.count(), 0)
+        self.assertEqual(response.status_code, 302)
+
+    def test_post_gets_updated_correctly(self):
+        factory = RequestFactory()
+        tag = Tag.objects.create(
+            name='temp_tag'
+        )
+        post = Post.objects.create(
+            title='Test Post 1',
+            slug='test-post-1',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+            tag=tag
+        )
+        new_data = {
+            'title': 'New title',
+            'slug': 'new-slug',
+            'content': 'new content',
+            'source': post.source,
+            'tag': tag,
+        }
+        request = factory.post(reverse('update', kwargs={'slug': post.slug}), new_data)
+        request.user = self.test_user
+        response = update_article(request, post.slug)
+        post.refresh_from_db()
+        self.assertEqual(post.title, 'New title')
+        self.assertEqual(post.slug, 'new-slug')
+
+    def test_personal_page_returns_filtered_articles(self):
+        test_user1 = User.objects.create(
+            email='temp2@temp2.com', 
+            password='temptemp2',
+            username='test_username2',
+        )
+        tag = Tag.objects.create(
+            name='temp_tag'
+        )
+        post1 = Post.objects.create(
+            title='Test Post 1',
+            slug='test-post-1',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+            tag=tag
+        )
+        post2 = Post.objects.create(
+            title='Test Post 2',
+            slug='test-post-2',
+            content='Content',
+            source='http://www.temp.com',
+            author=test_user1,
+            tag=tag
+        )
+
+        response = self.client.get(reverse('personal_page', kwargs={'username': self.test_user.username}))
+        self.assertIn(post1, response.context['posts'])
+
 class PostModelTest(TestCase):
 
     def setUp(self):
@@ -262,3 +334,13 @@ class PostFormTest(TestCase):
 
         form = TestForm(data=form_data)
         self.assertIsNotNone(form.errors.get('slug'))
+
+    def test_updateform_field_is_not_required(self):
+        form_data = {
+            'title': 'temp_title',
+            'content': 'content',
+            'source': 'http://www.test.com',
+            'tag': 'Test'
+        }
+        form = UpdatePostForm(data=form_data)
+        self.assertTrue(form.is_valid())

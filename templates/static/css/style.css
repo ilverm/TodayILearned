@@ -24,9 +24,17 @@
 }
 
 .nav-home {
-    color: #030409 !important;
     font-size: 48px !important;
     text-decoration: none;
+}
+
+.title-todayi {
+    color: #030409;
+}
+
+.title-learned {
+    color: #7393b3;
+    margin-left: -1rem;
 }
 
 .explore-nav {
@@ -50,7 +58,7 @@
     left: 0;
   }
 
-.user-dropdown,
+/* .user-dropdown,
 .user-login {
     background-color: transparent !important;
     border-color: transparent !important;
@@ -58,8 +66,17 @@
     padding-top: 3px !important;
     padding-bottom: 3px !important;
     border: 0px !important;
-}
+} */
 
+.user-dropdown {
+    /* padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important; */
+    margin-right: 1rem;
+    background-color: transparent;
+    border: 1px solid #030409 !important;
+}
 
 .signup-button,
 .create-button {
@@ -157,4 +174,23 @@ ul.dropdowns > li a:focus {
 
 .all-articles {
     border: 0px;
+}
+
+/* personal_page.html */
+
+svg {
+    margin-right: 10px !important;
+}
+
+.singlepost-actions {
+    padding: 0% !important;
+    border: none !important;
+}
+
+.singlepost-actions:focus {
+    border: none !important;
+}
+
+.singlepost-actions-icon {
+    margin-right: 0% !important;
 }

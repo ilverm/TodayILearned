@@ -10,8 +10,10 @@ urlpatterns = [
     path('', views.home_page, name='home'),
     path('create/', views.create_post, name='create'),
     path('search/', views.search, name='search'),
+    path('delete/<str:slug>/', views.delete_article, name='delete'),
+    path('update/<str:slug>/', views.update_article, name='update'),
     path('<str:tag>/', views.tag_view, name='tag_view'),
-    path('user/<str:author>/', views.author_view, name='author_view'),
+    path('user/<str:username>/', views.personal_page, name='personal_page'),
     path('<int:year>/<str:slug>/', views.single_post_view, name='single_post'),
     path('accounts/login/', auth_views.LoginView.as_view(
         template_name='registration/login.html'), 

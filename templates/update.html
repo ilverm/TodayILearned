@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load remove_links %}
+{% load remove_margins %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block body %}
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-light" style="margin-bottom: 5rem;">Update</button>
+    </form>
+{% endblock body %}
