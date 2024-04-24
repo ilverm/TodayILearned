@@ -27,4 +27,5 @@ class UpdatePostForm(PostForm):
     slug = forms.CharField(label='Slug', required=False)
     content = forms.CharField(label='Content', required=False, widget=TinyMCE(attrs={'rows': 20}))
     source = forms.URLField(label='Source', required=False)
+    private = forms.BooleanField(label='Private', required=False)
     tag = forms.CharField(label='Tag', required=False, max_length=25)

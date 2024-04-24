@@ -127,7 +127,8 @@ def update_article(request, slug):
         'slug': post.slug,
         'content': post.content,
         'source': post.source,
-        'tag': post.tag
+        'tag': post.tag,
+        'private': post.private
     }
     form = UpdatePostForm(initial=initial_values)
     if request.method == 'POST':
@@ -137,6 +138,9 @@ def update_article(request, slug):
         }
         tag, _ = Tag.objects.get_or_create(name=updated_fields['tag'])
         updated_fields['tag'] = tag
+        # if checkbox is checked 'on' is in getlist_private else getlist_private is empty
+        getlist_private = request.POST.getlist('private')
+        updated_fields['private'] = True if 'on' in getlist_private else False
         Post.objects.filter(author=request.user, slug=slug).update(**updated_fields)
         return HttpResponseRedirect(reverse('single_post', kwargs={'year': post.created_at.year, 'slug': post.slug}))
     context = {

@@ -221,6 +221,7 @@ class PostViewsTest(TestCase):
             content='Content',
             source='http://www.temp.com',
             author=self.test_user,
+            private=True,
             tag=tag
         )
         new_data = {
@@ -228,6 +229,7 @@ class PostViewsTest(TestCase):
             'slug': 'new-slug',
             'content': 'new content',
             'source': post.source,
+            'private': False,
             'tag': tag,
         }
         request = factory.post(reverse('update', kwargs={'slug': post.slug}), new_data)
