@@ -148,6 +148,33 @@ class PostViewsTest(TestCase):
         post.refresh_from_db()
         self.assertEqual(post.likes, 1)
 
+    def test_single_post_view_does_not_display_private_posts(self):
+        tag = Tag.objects.create(name='test')
+        post1 = Post.objects.create(
+            title='Test Post 1',
+            slug='test-post-1',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+            private=True,
+            tag=tag
+        )
+        post2 = Post.objects.create(
+            title='Test Post 2',
+            slug='test-post-2',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+            private=False,
+            tag=tag
+        )
+
+        response = self.client.get(reverse(
+            'single_post', kwargs={'year': post2.created_at.year, 'slug': post2.slug}
+        ))
+        self.assertEqual(post2, response.context['single_post'])
+        self.assertNotEqual(post1, response.context['single_post'])
+
     def test_search_view(self):
         first_post = Post.objects.create(
             title='Test Post 1',

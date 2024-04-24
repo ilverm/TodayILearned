@@ -3,20 +3,24 @@
 {% block title %}{{ single_post.title }} - TodayILearned{% endblock title %}
 
 {% block single_post %}
-<strong>{{ single_post }}</strong>
-<p>{{ single_post.content|safe }}</p>
-<form action="" method="post">
-    {% csrf_token %}
-    <p>
-        <strong>Likes </strong>{{ single_post.likes }}
-        {% if request.user.is_authenticated %}
-            {% if not liked %}
-                <input type="submit" value="Like" name="like">
-            {% else %}
-                <input type="submit" value="Dislike" name="dislike">
+{% if single_post.private %}
+    <p>Post does not exist.</p>
+{% else %}
+    <strong>{{ single_post }}</strong>
+    <p>{{ single_post.content|safe }}</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>
+            <strong>Likes </strong>{{ single_post.likes }}
+            {% if request.user.is_authenticated %}
+                {% if not liked %}
+                    <input type="submit" value="Like" name="like">
+                {% else %}
+                    <input type="submit" value="Dislike" name="dislike">
+                {% endif %}
             {% endif %}
-        {% endif %}
-    </p>
-</form>
+        </p>
+    </form>
+{% endif %}
 {% endblock single_post %}
 <a href="{% url 'home' %}">All posts</a>

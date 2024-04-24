@@ -63,7 +63,7 @@ def create_post(request):
     return render(request, 'create.html', {'form': form})
 
 def single_post_view(request, year, slug):
-    post = get_object_or_404(Post, created_at__year=year, slug=slug)
+    post = get_object_or_404(Post, created_at__year=year, slug=slug, private=False)
     try:
         liked = Like.objects.get(post=post).liked
     except ObjectDoesNotExist:
