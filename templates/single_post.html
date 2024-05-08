@@ -1,17 +1,18 @@
 {% extends 'home.html' %}
+{% load i18n %}
 
 {% block title %}{{ single_post.title }} - TodayILearned{% endblock title %}
 
 {% block single_post %}
 {% if single_post.private %}
-    <p>Post does not exist.</p>
+    <p>{% translate "Post does not exist." %}</p>
 {% else %}
     <strong>{{ single_post }}</strong>
     <p>{{ single_post.content|safe }}</p>
     <form action="" method="post">
         {% csrf_token %}
         <p>
-            <strong>Likes </strong>{{ single_post.likes }}
+            <strong>{% translate "Likes" %} </strong>{{ single_post.likes }}
             {% if request.user.is_authenticated %}
                 {% if not liked %}
                     <input type="submit" value="Like" name="like">

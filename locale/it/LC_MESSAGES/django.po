@@ -1,0 +1,136 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-08 18:39+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: config/settings.py:176
+msgid "English"
+msgstr "Inglese"
+
+#: config/settings.py:177
+msgid "Italian"
+msgstr "Italiano"
+
+#: posts/forms.py:9 posts/forms.py:27
+msgid "Title"
+msgstr "Titolo"
+
+#: posts/forms.py:10 posts/forms.py:28
+msgid "Slug"
+msgstr "Slug"
+
+#: posts/forms.py:11 posts/forms.py:29
+msgid "Content"
+msgstr "Contenuto"
+
+#: posts/forms.py:12 posts/forms.py:30
+msgid "Source"
+msgstr "Fonte"
+
+#: posts/forms.py:13 posts/forms.py:32
+msgid "Tag"
+msgstr "Tag"
+
+#: posts/forms.py:17
+msgid "Tag field cannot contain spaces."
+msgstr "La tag non può contenere spazi."
+
+#: posts/forms.py:23
+msgid "Slug cannot be longer than 50 characters"
+msgstr "Lo slug non può essere più lungo di 50 caratteri."
+
+#: posts/forms.py:31 templates/personal_page.html:43
+msgid "Private"
+msgstr "Privato"
+
+#: templates/base.html:41
+msgid "Profile"
+msgstr "Profilo"
+
+#: templates/base.html:46
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: templates/base.html:63
+msgid "Sign Up"
+msgstr "Registrati"
+
+#: templates/base.html:88 templates/create.html:10
+msgid "Create"
+msgstr "Crea"
+
+#: templates/base.html:93
+msgid "Explore"
+msgstr "Esplora"
+
+#: templates/base.html:109
+msgid "search the site..."
+msgstr "Cerca nel sito..."
+
+#: templates/personal_page.html:38
+msgid "Edit"
+msgstr "Modifica"
+
+#: templates/personal_page.html:42
+msgid "Delete"
+msgstr "Cancella"
+
+#: templates/searched.html:39
+msgid "0 results"
+msgstr "Nessun risultato"
+
+#: templates/single_post.html:8
+msgid "Post does not exist."
+msgstr "Il post non esiste."
+
+#: templates/single_post.html:15
+msgid "Likes"
+msgstr "Mi piace"
+
+#: templates/update.html:14
+msgid "Update"
+msgstr "Aggiorna"
+
+#: users/managers.py:14
+msgid "The email must be set"
+msgstr "L'email è richiesta"
+
+#: users/managers.py:17
+msgid "The username must be set"
+msgstr "Il nome utente è richiesto"
+
+#: users/managers.py:32
+msgid "Superuser must have is_staff=True."
+msgstr ""
+
+#: users/managers.py:34
+msgid "Superuser must have is_superuser=True."
+msgstr ""
+
+#: users/models.py:10
+msgid "email address"
+msgstr "Indirizzo email"
+
+#: users/validators.py:11
+msgid ""
+"Username must be at least 8 characters long and must not contain spaces."
+msgstr ""
+"Il nome utente deve avere almeno 8 caratteri e non può contenere spazi."
+
+#~ msgid "Hide"
+#~ msgstr "Nascondi"

@@ -1,4 +1,5 @@
 {% extends 'home.html' %}
+{% load i18n %}
 {% load remove_links %}
 {% load remove_margins %}
 
@@ -35,6 +36,6 @@
         {% endif %}
     {% endfor %}
 {% else %}
-    <p>0 results</p>
+    <p>{% translate "0 results" %}</p>
 {% endif %}
 {% endblock single_post %}

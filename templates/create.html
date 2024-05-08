@@ -1,9 +1,14 @@
-<!DOCTYPE HTML>
+{% extends 'base.html' %}
+{% load i18n %}
 
+{% block body %}
 <form action="" method="post">
     {% csrf_token %}
     {{ form.media }}
     {{ form.as_p }}
-    <input type="submit" value="Submit">
+    <button type="submit" class="btn btn-light" style="margin-bottom: 5rem;">
+        {% translate "Create" %}
+    </button>
 </form>
 <a href="{% url 'home' %}">Home</a>
+{% endblock body %}

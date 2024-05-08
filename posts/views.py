@@ -142,7 +142,9 @@ def update_article(request, slug):
         getlist_private = request.POST.getlist('private')
         updated_fields['private'] = True if 'on' in getlist_private else False
         Post.objects.filter(author=request.user, slug=slug).update(**updated_fields)
-        return HttpResponseRedirect(reverse('single_post', kwargs={'year': post.created_at.year, 'slug': post.slug}))
+        return HttpResponseRedirect(reverse(
+            'single_post', kwargs={'year': post.created_at.year, 'slug': post.slug}
+        ))
     context = {
         'form': form,
         'title': post.title
