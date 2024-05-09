@@ -59,6 +59,7 @@ def create_post(request):
                 author=request.user, 
                 tag=tag
             )
+
             return HttpResponseRedirect(reverse('home'))
     return render(request, 'create.html', {'form': form})
 

@@ -2,12 +2,15 @@ import unittest
 import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.utils.translation import activate
 from django.urls import reverse
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+
+activate('en')
 
 class NewVisitorTest(StaticLiveServerTestCase):
 
@@ -58,7 +61,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         source_input.send_keys('http://www.test.com')
         tag_input = self.browser.find_element(By.NAME, 'tag')
         tag_input.send_keys('test_tag')
-        self.browser.find_element(By.XPATH, '//input[@value="Submit"]').click()
+        #self.browser.find_element(By.XPATH, '//input[@value="Submit"]').click()
+        self.browser.find_element(By.CLASS_NAME, 'create-btn').click()
         
         # Check if title in home page
         title_text = self.browser.find_element(By.CLASS_NAME, 'home-title').text

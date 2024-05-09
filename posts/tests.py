@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.utils.translation import activate
 
 from tags.models import Tag
 from likes.models import Like
@@ -15,6 +16,8 @@ from .views import single_post_view, delete_article, update_article, personal_pa
 from .forms import PostForm, UpdatePostForm
 
 User = get_user_model()
+
+activate('en')
 
 class TestForm(PostForm):
     def __init__(self, *args, **kwargs):
@@ -100,6 +103,7 @@ class PostViewsTest(TestCase):
             'tag': 'Temp'
             }
         )
+
         self.assertEqual(response.status_code, 302)
         # add more tests when login functionality is created
 

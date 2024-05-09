@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from django.utils.translation import activate
+
 from users.models import CustomUser
 from tags.models import Tag
 from posts.models import Post
@@ -14,6 +16,8 @@ from rest_framework.reverse import reverse as rest_reverse
 
 import unittest
 
+activate('en')
+
 class SerializersTest(APITestCase):
 
     def setUp(self):
@@ -24,7 +28,7 @@ class SerializersTest(APITestCase):
         )
         self.tag = Tag.objects.create(name='test_tag')
         self.post_data = {
-            'id': 'http://testserver/api/posts/1/',
+            'id': 'http://testserver' + rest_reverse('api_singlepost', kwargs={'pk': 1}),
             'title': 'test title',
             'slug': 'test-title',
             'content': 'test content',
@@ -106,7 +110,7 @@ class ListCreatePosts(APITestCase):
         )
         self.tag = Tag.objects.create(name='test_tag')
         self.post_data = {
-            'id': 'http://testserver/api/posts/1/',
+            'id': 'http://testserver' + rest_reverse('api_singlepost', kwargs={'pk': 1}),
             'title': 'test title',
             'slug': 'test-title',
             'content': 'test content',
@@ -206,7 +210,7 @@ class ListCreateTags(APITestCase):
         200 OK status code, indicating successful retrieval
         of data
         """
-        url = 'http://testserver/api/posts/?page=1'
+        url = rest_reverse('api_posts') + '?page=1'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -250,7 +254,7 @@ class ListCreateTags(APITestCase):
         # Get the pk of the obj we created in the post request
         obj_id = Tag.objects.first().pk
 
-        response = self.client.delete(path=f'http://testserver/api/tags/{obj_id}/')
+        response = self.client.delete(path=rest_reverse('api_singletag', kwargs={'pk': obj_id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_tag_update_endpoint(self):
@@ -261,7 +265,7 @@ class ListCreateTags(APITestCase):
         obj_id = Tag.objects.first().pk
         self.post_data['name'] = 'new'
 
-        url = f'http://testserver/api/tags/{obj_id}/'
+        url = rest_reverse('api_singletag', kwargs={'pk': obj_id})
 
         response = self.client.put(path=url, data=self.post_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -272,7 +276,7 @@ class ListCreateTags(APITestCase):
         logged in user.
         """
         self.client.force_authenticate(user=self.user)
-        response = self.client.post('/api/tags/', self.post_data)
+        response = self.client.post(rest_reverse('api_tags'), data=self.post_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_tag_post_endpoint_with_logged_out_user(self):
