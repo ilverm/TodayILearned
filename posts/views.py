@@ -1,3 +1,5 @@
+import re
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -108,6 +110,17 @@ def personal_page(request, username):
         posts_filtered_by_author = Post.objects.filter(author__username=username)
         context = {'posts': posts_filtered_by_author, 'username': username}
         return render(request, 'personal_page.html', context=context)
+    if request.method == 'POST':
+        pattern = re.compile(r'make_private\s-\s\d+')
+        is_private = {
+            k[-1]: request.POST[k] for k in request.POST.keys() if pattern.search(k)
+        }
+        post_id = list(is_private.keys())[0]
+        post = Post.objects.get(id=int(post_id))
+        post.private = False if 'on' in is_private.values() else True
+        post.save()
+        return HttpResponseRedirect(reverse('personal_page', kwargs={'username': username}))
+
     
 @login_required
 def delete_article(request, slug):
