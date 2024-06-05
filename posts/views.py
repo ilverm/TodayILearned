@@ -107,7 +107,7 @@ def tag_view(request, tag):
     
 def personal_page(request, username):
     if request.method == 'GET':
-        posts_filtered_by_author = Post.objects.filter(author__username=username)
+        posts_filtered_by_author = Post.objects.filter(author__username=username).order_by('-created_at')
         context = {'posts': posts_filtered_by_author, 'username': username}
         return render(request, 'personal_page.html', context=context)
     if request.method == 'POST':

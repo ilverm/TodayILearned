@@ -2,6 +2,11 @@
 
 /* base.html */
 
+* {
+    font-family: "DM Sans", sans-serif !important;
+    font-optical-sizing: auto !important;
+}
+
 .main-nav-col {
     padding: 0% !important;
 }
@@ -34,7 +39,7 @@
 
 .title-learned {
     color: #7393b3;
-    margin-left: -1rem;
+    margin-left: -14px;
 }
 
 .explore-nav {
@@ -219,4 +224,15 @@ svg {
     background-color: #030409 !important;
     border-color: #030409 !important;
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgb(255,255,255)'/></svg>") !important;
+}
+
+/* single_post.html */
+
+.single-post-title {
+    font-weight: bold !important;
+    font-size: 36px;
+}
+
+.single-post-content {
+    font-size: 18px !important;
 }

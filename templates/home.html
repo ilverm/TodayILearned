@@ -54,25 +54,4 @@
         <div class="col"></div>
     </div>
 </div>
-
-
-
-
-<div id="flex-container" style="display: flex; justify-content: space-between !important;">
-    <div>CREATED POSTS:</div>
-    {% if user.is_authenticated %}
-        <a href="{% url 'password_change' %}">Change Password</a>
-    {% else %}
-        <div>User</div>
-        <a href="{% url 'create_account' %}">Create Account</a>
-    {% endif %}
-</div>
-
-{% if user.is_authenticated %}
-<a href="{% url 'logout' %}">Logout</a>
-{% else %}
-    <a href="{% url 'login' %}">Login</a>
-{% endif %}
-
-<p><a href="{% url 'create' %}">Create</a></p>
 {% endblock body %}
