@@ -3,6 +3,7 @@ import re
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F, Count
@@ -67,27 +68,33 @@ def create_post(request):
 
 def single_post_view(request, year, slug):
     post = get_object_or_404(Post, created_at__year=year, slug=slug, private=False)
-    try:
-        liked = Like.objects.get(post=post).liked
-    except ObjectDoesNotExist:
-        liked = False
+    liked = False
+    
+    if request.user.is_authenticated:
+        try:
+            user_like = Like.objects.get(user=request.user, post=post)
+            liked = user_like.liked
+        except ObjectDoesNotExist:
+            liked = False
+
     context = {'single_post': post, 'likes': post.likes, 'liked': liked}
+    
     if request.method == 'POST' and request.user.is_authenticated:
-        # Check if the user has already liked or disliked the post
-        like, _ = Like.objects.get_or_create(user=request.user, post=post)
-        if 'like' in request.POST:
-            post.likes = F('likes') + 1
-            like.liked = True
-        if 'dislike' in request.POST:
-            post.likes = F('likes') - 1
-            like.liked = False
+        with transaction.atomic():
+            like, _ = Like.objects.get_or_create(user=request.user, post=post)
+            if 'like' in request.POST and not like.liked:
+                post.likes = F('likes') + 1
+                like.liked = True
+            elif 'dislike' in request.POST and like.liked:
+                post.likes = F('likes') - 1
+                like.liked = False
+
+            post.save()
+            like.save()
+            post.refresh_from_db()
 
         context['liked'] = like.liked
-            
-        post.save()
-        post.refresh_from_db()
-        like.save()
-
+    
     return render(request, 'single_post.html', context=context)
 
 def create_account(request):

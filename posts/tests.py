@@ -152,6 +152,30 @@ class PostViewsTest(TestCase):
         post.refresh_from_db()
         self.assertEqual(post.likes, 1)
 
+    def test_user_cannot_like_post_more_than_once(self):
+        factory = RequestFactory()
+        post = Post.objects.create(
+            title='Test Post',
+            slug='test-post',
+            content='Content',
+            source='http://www.temp.com',
+            author=self.test_user,
+            likes=1
+        )
+        like = Like.objects.create(
+            user=self.test_user,
+            post=post,
+            liked=True,
+        )
+        post_data = {'like': 'Like'}
+        self.assertEqual(post.likes, 1)
+        request = factory.post(reverse('single_post', args=[post.created_at.year, post.slug]), post_data)
+        request.user = self.test_user
+        response = single_post_view(request, post.created_at.year, post.slug)
+        self.assertEqual(response.status_code, 200)
+        post.refresh_from_db()
+        self.assertNotEqual(post.likes, 2)
+
     def test_single_post_view_does_not_display_private_posts(self):
         tag = Tag.objects.create(name='test')
         post1 = Post.objects.create(
