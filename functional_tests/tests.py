@@ -5,7 +5,7 @@ from django.utils.translation import activate
 from django.urls import reverse
 
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
@@ -15,15 +15,12 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         options = webdriver.FirefoxOptions()
-        options.add_argument("--headless")
+        #options.add_argument("--headless")
         self.browser = webdriver.Firefox(options=options)
         self.browser.implicitly_wait(10)
         self.browser.get(self.live_server_url)
 
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_single_user_can_create_a_post(self):
+        # create user
         self.browser.find_element(By.CLASS_NAME, 'signup-button').click()
         email_input = self.browser.find_element(By.NAME, 'email')
         email_input.send_keys('test@test.com')
@@ -35,6 +32,10 @@ class NewVisitorTest(StaticLiveServerTestCase):
         password2_input.send_keys('testpassword')
         self.browser.find_element(By.XPATH, '//button[@value="create_account"]').click()
 
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_single_user_can_create_a_post(self):
         username_input = self.browser.find_element(By.NAME, 'username')
         username_input.send_keys('test@test.com')
         password_input = self.browser.find_element(By.NAME, 'password')
@@ -70,18 +71,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertEqual('test title', title_text)
 
     def test_multiple_user_can_create_posts(self):
-        # create first user
-        self.browser.find_element(By.CLASS_NAME, 'signup-button').click()
-        email_input = self.browser.find_element(By.NAME, 'email')
-        email_input.send_keys('test@test.com')
-        username_input = self.browser.find_element(By.NAME, 'username')
-        username_input.send_keys('test@test.com')
-        password1_input = self.browser.find_element(By.NAME, 'password1')
-        password1_input.send_keys('testpassword')
-        password2_input = self.browser.find_element(By.NAME, 'password2')
-        password2_input.send_keys('testpassword')
-        self.browser.find_element(By.XPATH, '//button[@value="create_account"]').click()
-
         # log first user in
         username_input = self.browser.find_element(By.NAME, 'username')
         username_input.send_keys('test@test.com')
@@ -148,6 +137,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_italian_localization(self):
         # test english localization
+        self.browser.get(self.live_server_url)
         en_signup_btn = self.browser.find_element(By.CLASS_NAME, 'signup-button').text
         self.assertEqual('Sign Up', en_signup_btn)
 
@@ -170,3 +160,47 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # test english localization in search bar
         en_search_bar = self.browser.find_element(By.CLASS_NAME, 'search-bar').get_attribute('placeholder')
         self.assertEqual('search the site...', en_search_bar)
+
+    def test_personal_page(self):
+        # log first user in
+        username_input = self.browser.find_element(By.NAME, 'username')
+        username_input.send_keys('test@test.com')
+        password_input = self.browser.find_element(By.NAME, 'password')
+        password_input.send_keys('testpassword')
+        self.browser.find_element(By.XPATH, '//input[@value="login"]').click()
+
+        # Create post
+        self.browser.find_element(By.CLASS_NAME, 'create-button').click()
+        title_input = self.browser.find_element(By.NAME, 'title')
+        title_input.send_keys('test title')
+        slug_input = self.browser.find_element(By.NAME, 'slug')
+        slug_input.send_keys('test-title')
+        self.browser.execute_script("tinyMCE.activeEditor.selection.setContent('test content ')")
+        source_input = self.browser.find_element(By.NAME, 'source')
+        source_input.send_keys('http://www.test.com')
+        tag_input = self.browser.find_element(By.NAME, 'tag')
+        tag_input.send_keys('test_tag')
+        self.browser.find_element(By.CLASS_NAME, 'create-btn').click()
+
+        # find and click user button
+        self.browser.find_element(By.CLASS_NAME, 'user-dropdown').click()
+        self.browser.find_element(By.CLASS_NAME, 'first-dropdown').click()
+        # test title
+        post_actions = self.browser.find_element(By.CLASS_NAME, 'singlepost-actions')
+        self.assertTrue(post_actions)
+
+        # log user out
+        self.browser.find_element(By.CLASS_NAME, 'user-dropdown').click()
+        self.browser.find_element(By.CLASS_NAME, 'logout-dropdown').click()
+
+        # find and click author of test post
+        self.browser.find_element(By.CLASS_NAME, 'home-author').click()
+        test_title = self.browser.find_element(By.CLASS_NAME, 'home-title')
+        self.assertTrue(test_title)
+        
+        try:
+            post_actions = self.browser.find_element(By.CLASS_NAME, 'singlepost-actions')
+        except NoSuchElementException:
+            post_actions = None
+
+        self.assertFalse(post_actions)
