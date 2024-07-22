@@ -83,7 +83,18 @@
     border: 1px solid #030409 !important;
 }
 
-.signup-button,
+.signup-button {
+    background-color: #7393b3 !important;
+    border-color: #7393b3 !important;
+    color: #030409 !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    margin-right: 1rem;
+    border: 0px !important;
+}
+
 .create-button {
     background-color: #7393b3 !important;
     border-color: #7393b3 !important;
