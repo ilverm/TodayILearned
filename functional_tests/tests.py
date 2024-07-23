@@ -15,7 +15,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         options = webdriver.FirefoxOptions()
-        #options.add_argument("--headless")
+        options.add_argument("--headless")
         self.browser = webdriver.Firefox(options=options)
         self.browser.implicitly_wait(10)
         self.browser.get(self.live_server_url)
